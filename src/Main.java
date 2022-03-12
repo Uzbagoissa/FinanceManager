@@ -1,4 +1,3 @@
-import manager.InMemoryHistoryManager;
 import manager.InMemoryTaskManager;
 import model.Epic;
 import model.Subtask;
@@ -11,7 +10,6 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
         while (true) {
             System.out.println("Выберите действие:");
@@ -73,7 +71,7 @@ public class Main {
                 int idNumber = scanner.nextInt();
                 Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
                 Subtask subtask = new Subtask();
-                System.out.println(epic.createSubTask(epic, subtask));
+                System.out.println(inMemoryTaskManager.createSubTask(epic, subtask));
 
             } else if (command == 7) {
                 System.out.println(inMemoryTaskManager.clearAllTasks());
@@ -84,8 +82,7 @@ public class Main {
             } else if (command == 80) {
                 System.out.println("Введите ID model.model.Epic");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
-                System.out.println(epic.clearAllSubTasks());
+                System.out.println(inMemoryTaskManager.clearAllSubTasks(idNumber));
 
             } else if (command == 9) {
                 System.out.println("Введите ID");
@@ -94,11 +91,10 @@ public class Main {
 
             } else if (command == 90) {
                 System.out.println("Введите ID model.model.Epic");
-                int idNumber = scanner.nextInt();
-                Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
+                int epicIdNumber = scanner.nextInt();
                 System.out.println("Введите ID подзадачи");
-                int subIdNumber = scanner.nextInt();
-                System.out.println(epic.getSubTaskById(subIdNumber));
+                int subtaskIdNumber = scanner.nextInt();
+                System.out.println(inMemoryTaskManager.getSubTaskById(epicIdNumber, subtaskIdNumber));
 
             } else if (command == 10) {
                 System.out.println("Введите ID");
@@ -119,7 +115,7 @@ public class Main {
                 System.out.println("Введите ID подзадачи");
                 Subtask newSubTask = new Subtask();
                 int subIdNumber = scanner.nextInt();
-                System.out.println(epic.renewSubTaskById(epic, newSubTask, subIdNumber));
+                System.out.println(inMemoryTaskManager.renewSubTaskById(epic, newSubTask, subIdNumber));
 
             } else if (command == 13) {
                 System.out.println("Введите ID");
@@ -137,7 +133,7 @@ public class Main {
                 Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
                 System.out.println("Введите ID подзадачи");
                 int subIdNumber = scanner.nextInt();
-                System.out.println(epic.clearSubTaskById(epic, subIdNumber));
+                System.out.println(inMemoryTaskManager.clearSubTaskById(epic, subIdNumber));
 
             } else if (command == 16) {
                 System.out.println(inMemoryTaskManager.getTasksList() + " " + inMemoryTaskManager.getEpicsList());
@@ -152,8 +148,8 @@ public class Main {
                 int idNumber = scanner.nextInt();
                 System.out.println(inMemoryTaskManager.getEpicStatusById(idNumber));
 
-            } else  if (command == 19){
-                System.out.println(inMemoryHistoryManager.getHistory());
+            } else if (command == 19) {
+                System.out.println(inMemoryTaskManager.getInMemoryHistoryManager().getHistory());
 
             } else if (command == 0) {
                 break;
