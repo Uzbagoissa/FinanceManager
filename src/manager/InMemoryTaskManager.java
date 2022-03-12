@@ -1,30 +1,22 @@
 package manager;
+
 import model.Epic;
+import model.Status;
 import model.Task;
 
 import java.util.HashMap;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> taskList;
     private HashMap<Integer, Epic> epicList;
     private int idNumber;
+    HistoryManager inMemoryHistoryManager;
 
-    public Manager() {
+    public InMemoryTaskManager() {
         this.taskList = new HashMap<>();
         this.epicList = new HashMap<>();
         this.idNumber = 0;
-    }
-
-    public HashMap createTask(Task task) {
-        idNumber += 1;
-        taskList.put(idNumber, task);
-        return taskList;
-    }
-
-    public HashMap createEpic(Epic epic) {
-        idNumber += 1;
-        epicList.put(idNumber, epic);
-        return epicList;
+        this.inMemoryHistoryManager = Managers.getDefaultHistory();
     }
 
     public HashMap getTasksList() {
@@ -35,56 +27,82 @@ public class Manager {
         return epicList;
     }
 
+    @Override
+    public HashMap createTask(Task task) {
+        idNumber += 1;
+        taskList.put(idNumber, task);
+        task.setStatus(Status.NEW);
+        return taskList;
+    }
+
+    @Override
+    public HashMap createEpic(Epic epic) {
+        idNumber += 1;
+        epicList.put(idNumber, epic);
+        epic.setStatus(Status.NEW);
+        return epicList;
+    }
+
+    @Override
     public HashMap clearAllTasks() {
         taskList.clear();
         return taskList;
     }
 
+    @Override
     public HashMap clearAllEpic() {
         epicList.clear();
         return epicList;
     }
 
-    public Object getAnyTaskById(int idNumber) {
-        Object o = null;
+    @Override
+    public Task getAnyTaskById(int idNumber) {
+        Task task = null;
         if (taskList.get(idNumber) != null) {
-            o = taskList.get(idNumber);
+            task = taskList.get(idNumber);
         } else if (epicList.get(idNumber) != null) {
-            o = epicList.get(idNumber);
+            task = epicList.get(idNumber);
         }
-        return o;
+        inMemoryHistoryManager.add(task);
+        return task;
     }
 
-    public HashMap renewTaskById(Task newTask, int idNumber, String status) {
-        newTask.setStatus(status);
+    @Override
+    public HashMap renewTaskById(Task newTask, int idNumber) {
+        newTask.setStatus(Status.NEW);
         taskList.put(idNumber, newTask);
         return taskList;
     }
 
-    public HashMap renewEpicById(Epic newEpic, int idNumber, String status) {
-        newEpic.setStatus(status);
+    @Override
+    public HashMap renewEpicById(Epic newEpic, int idNumber) {
+        newEpic.setStatus(Status.NEW);
         epicList.put(idNumber, newEpic);
         return epicList;
     }
 
+    @Override
     public HashMap clearTaskById(int idNumber) {
         taskList.remove(idNumber);
         return taskList;
     }
 
+    @Override
     public HashMap clearEpicById(int idNumber) {
         epicList.remove(idNumber);
         return epicList;
     }
 
+    @Override
     public String getTaskStatusById(int idNumber) {
         Task task = taskList.get(idNumber);
-        return task.getStatus();
+        return String.valueOf(task.getStatus());
     }
 
+    @Override
     public String getEpicStatusById(int idNumber) {
         Epic epic = epicList.get(idNumber);
-        return epic.getStatus();
+        return String.valueOf(epic.getStatus());
     }
 
 }
