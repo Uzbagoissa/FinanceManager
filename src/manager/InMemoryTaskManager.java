@@ -36,6 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public HashMap createTask(Task task) {
         idNumber += 1;
+        task.setId(idNumber);
         taskList.put(idNumber, task);
         task.setStatus(Status.NEW);
         return taskList;
@@ -44,6 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public HashMap createEpic(Epic epic) {
         idNumber += 1;
+        epic.setId(idNumber);
         epicList.put(idNumber, epic);
         epic.setStatus(Status.NEW);
         return epicList;
@@ -53,6 +55,7 @@ public class InMemoryTaskManager implements TaskManager {
     public HashMap createSubTask(Epic epic, Subtask subtask) {
         idNumber += 1;
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
+        subtask.setId(idNumber);
         subTaskList.put(idNumber, subtask);
         subtask.setStatus(Status.NEW);
         changeEpicStatus(epic);
@@ -84,10 +87,11 @@ public class InMemoryTaskManager implements TaskManager {
         Task task = null;
         if (taskList.get(idNumber) != null) {
             task = taskList.get(idNumber);
+            inMemoryHistoryManager.add(task);
         } else if (epicList.get(idNumber) != null) {
             task = epicList.get(idNumber);
+            inMemoryHistoryManager.add(task);
         }
-        inMemoryHistoryManager.add(task);
         return task;
     }
 
@@ -98,14 +102,15 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask task = null;
         if (subTaskList.get(subtaskIdNumber) != null) {
             task = subTaskList.get(subtaskIdNumber);
+            inMemoryHistoryManager.add(task);
         }
-        inMemoryHistoryManager.add(task);
         return task;
     }
 
     @Override
     public HashMap renewTaskById(Task newTask, int idNumber) {
         newTask.setStatus(Status.NEW);
+        newTask.setId(idNumber);
         taskList.put(idNumber, newTask);
         return taskList;
     }
@@ -113,6 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public HashMap renewEpicById(Epic newEpic, int idNumber) {
         newEpic.setStatus(Status.NEW);
+        newEpic.setId(idNumber);
         epicList.put(idNumber, newEpic);
         return epicList;
     }
@@ -121,6 +127,7 @@ public class InMemoryTaskManager implements TaskManager {
     public HashMap renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber) {
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
         newSubTask.setStatus(Status.NEW);
+        newSubTask.setId(idNumber);
         subTaskList.put(idNumber, newSubTask);
         changeEpicStatus(epic);
         return subTaskList;
@@ -128,18 +135,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public HashMap clearTaskById(int idNumber) {
+        inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
         taskList.remove(idNumber);
         return taskList;
     }
 
     @Override
     public HashMap clearEpicById(int idNumber) {
+        inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
         epicList.remove(idNumber);
         return epicList;
     }
 
     @Override
     public HashMap clearSubTaskById(Epic epic, int idNumber) {
+        inMemoryHistoryManager.remove(getSubTaskById(epic.getId(), idNumber));
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
         subTaskList.remove(idNumber);
         changeEpicStatus(epic);
@@ -165,13 +175,13 @@ public class InMemoryTaskManager implements TaskManager {
             Subtask subtask = task;
             statuses.add(subtask.getStatus());
         }
-        if (subTaskList.isEmpty() == true) {
+        if (subTaskList.isEmpty()) {
             epic.setStatus(Status.NEW);
-        } else if (statuses.contains(Status.NEW) == false && statuses.contains(Status.DONE) == true && subTaskList.isEmpty() == false) {
+        } else if (!statuses.contains(Status.NEW) && statuses.contains(Status.DONE)) {
             epic.setStatus(Status.DONE);
-        } else if (statuses.contains(Status.NEW) == true && statuses.contains(Status.DONE) == false && subTaskList.isEmpty() == false) {
+        } else if (statuses.contains(Status.NEW) && !statuses.contains(Status.DONE)) {
             epic.setStatus(Status.NEW);
-        } else if (statuses.contains(Status.NEW) && statuses.contains(Status.DONE) && subTaskList.isEmpty() == false) {
+        } else if (statuses.contains(Status.NEW) && statuses.contains(Status.DONE)) {
             epic.setStatus(Status.IN_PROGRESS);
         }
     }

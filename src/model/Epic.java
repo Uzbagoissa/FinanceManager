@@ -13,4 +13,11 @@ public class Epic extends Task {
     public HashMap getSubTasksList() {
         return subTaskList;
     }
+
+    @Override
+    public String toString() {
+        return "Epic{" +
+                "id=" + getId() +
+                '}';
+    }
 }
