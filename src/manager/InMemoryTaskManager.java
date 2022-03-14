@@ -8,7 +8,7 @@ import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {//ggg
     private HashMap<Integer, Task> taskList;
     private HashMap<Integer, Epic> epicList;
     private int idNumber;
