@@ -3,7 +3,7 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 
-import java.util.Scanner; //ggg
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {

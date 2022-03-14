@@ -6,7 +6,7 @@ import model.Task;
 
 import java.util.HashMap;
 
-public interface TaskManager {//ggg
+public interface TaskManager {
 
     HashMap createTask(Task task);
 

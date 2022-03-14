@@ -4,7 +4,7 @@ import model.Task;
 
 import java.util.ArrayList;
 
-public class InMemoryHistoryManager implements HistoryManager{//ggg
+public class InMemoryHistoryManager implements HistoryManager{
     ArrayList<Task> history = new ArrayList<>();
 
     @Override

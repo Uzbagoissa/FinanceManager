@@ -2,7 +2,7 @@ package model;
 
 import java.util.HashMap;
 
-public class Epic extends Task {//ggg
+public class Epic extends Task {
     private HashMap<Integer, Subtask> subTaskList;
 
     public Epic() {

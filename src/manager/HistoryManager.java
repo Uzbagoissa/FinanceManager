@@ -4,7 +4,7 @@ import model.Task;
 
 import java.util.ArrayList;
 
-public interface HistoryManager {//ggg
+public interface HistoryManager {
 
     ArrayList<Task> getHistory();
 
