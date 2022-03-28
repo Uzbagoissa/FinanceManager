@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class MyLinkedList {
 
-    transient Node<Task> first;
-    transient Node<Task> last;
+    Node<Task> first;
+    Node<Task> last;
 
     private Map<Integer, Node<Task>> map = new HashMap<>();
 
@@ -33,16 +33,14 @@ public class MyLinkedList {
         }
         if (first.data.getId() == data.getId()) {
             first = first.next;
-            map.remove(data.getId());
         } else if (last.data.getId() == data.getId()) {
             last.prev.next = null;
             last = last.prev;
-            map.remove(data.getId());
         } else {
             taskNode.prev.next = taskNode.next;
             taskNode.next.prev = taskNode.prev;
-            map.remove(data.getId());
         }
+        map.remove(data.getId());
     }
 
     public List<Task> getAll() {
@@ -56,11 +54,11 @@ public class MyLinkedList {
     }
 
     static class Node<R> {
-        public R data;
-        public Node<R> next;
-        public Node<R> prev;
+        R data;
+        Node<R> next;
+        Node<R> prev;
 
-        public Node(Node<R> prev, R data, Node<R> next) {
+        Node(Node<R> prev, R data, Node<R> next) {
             this.data = data;
             this.next = next;
             this.prev = prev;
