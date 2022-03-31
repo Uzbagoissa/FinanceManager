@@ -1,14 +1,16 @@
 package model;
 
-public class Task {
+import java.io.Serializable;
+
+public class Task implements Serializable {
     private int id;
-    private String name;
+    private Name name;
     private String description;
     private Status status;
 
     public Task() {
         this.name = name;
-        this.description = description;
+        this.description = "Description";
         this.status = status;
     }
 
@@ -28,10 +30,24 @@ public class Task {
         this.status = status;
     }
 
+    public Name getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = Name.Task;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                '}';
+        return id + ", " + Name.Task + ", " + status + ", " + description;
     }
 }

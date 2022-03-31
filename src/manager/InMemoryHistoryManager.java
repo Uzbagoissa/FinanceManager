@@ -4,10 +4,11 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager, Serializable {
     private MyLinkedList linkedHistory = new MyLinkedList();
 
     @Override
@@ -16,7 +17,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-    public void add(Task task){
+    public void add(Task task) {
         linkedHistory.removes(task);
         linkedHistory.linkLast(task);
     }
@@ -24,7 +25,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     @Override
     public void remove(Task task) {
         linkedHistory.removes(task);
-        if (task instanceof Epic){
+        if (task instanceof Epic) {
             HashMap<Integer, Subtask> subTaskMap = ((Epic) task).getSubTasksList();
             for (Subtask subtask : subTaskMap.values()) {
                 linkedHistory.removes(subtask);

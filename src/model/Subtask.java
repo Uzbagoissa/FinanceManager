@@ -1,6 +1,8 @@
 package model;
 
-public class Subtask extends Task {
+import java.io.Serializable;
+
+public class Subtask extends Task implements Serializable {
 
     public Subtask() {
         super();
@@ -8,8 +10,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "id=" + getId() +
-                '}';
+        return getId() + ", " + Name.Subtask + ", " + getStatus() + ", " + getDescription();
     }
 }

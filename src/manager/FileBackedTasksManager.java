@@ -1,16 +1,56 @@
-import manager.InMemoryTaskManager;
+package manager;
+
 import model.Epic;
 import model.Subtask;
 import model.Task;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
-public class Main implements Serializable {
-    public static void main(String[] args) {
+public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager, Serializable {
+
+    public static FileBackedTasksManager loadFromFile(File file, String dir) throws IOException, ClassNotFoundException {
+        FileBackedTasksManager fileBackedTasksManager;
+        if (!file.exists()) {
+            Files.createFile(Paths.get(dir, "backend.txt"));
+            fileBackedTasksManager = new FileBackedTasksManager();
+        } else {
+            FileInputStream fileInputStream = new FileInputStream("backend.txt");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            fileBackedTasksManager = (FileBackedTasksManager) objectInputStream.readObject();
+            objectInputStream.close();
+        }
+        return fileBackedTasksManager;
+    }
+
+    public static void save(File file, String dir, FileBackedTasksManager fileBackedTasksManager) {
+        try {
+            if (!file.exists()) {
+                Files.createFile(Paths.get(dir, "backend.txt"));
+                FileOutputStream outputStream = new FileOutputStream("backend.txt");
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                objectOutputStream.writeObject(fileBackedTasksManager);
+                objectOutputStream.close();
+            } else {
+                FileOutputStream outputStream = new FileOutputStream("backend.txt");
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                objectOutputStream.writeObject(fileBackedTasksManager);
+                objectOutputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        String dir = System.getProperty("user.dir");
+        File file = new File("backend.txt");
+
+        FileBackedTasksManager fileBackedTasksManager = loadFromFile(file, dir);       //загружаем сохраненную версию программы, либо создаем новый объект FileBackedTasksManager, если загружаемся впервые
 
         Scanner scanner = new Scanner(System.in);
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
         while (true) {
             System.out.println("Выберите действие:");
@@ -48,111 +88,112 @@ public class Main implements Serializable {
             int command = scanner.nextInt();
 
             if (command == 1) {
-                System.out.println(inMemoryTaskManager.getTasksList());
+                System.out.println(fileBackedTasksManager.getTasksList());
 
             } else if (command == 2) {
-                System.out.println(inMemoryTaskManager.getEpicsList());
+                System.out.println(fileBackedTasksManager.getEpicsList());
 
             } else if (command == 3) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
+                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber);
                 System.out.println(epic.getSubTasksList());
 
             } else if (command == 4) {
                 Task task = new Task();
-                System.out.println(inMemoryTaskManager.createTask(task));
+                System.out.println(fileBackedTasksManager.createTask(task));
 
             } else if (command == 5) {
                 Epic epic = new Epic();
-                System.out.println(inMemoryTaskManager.createEpic(epic));
+                System.out.println(fileBackedTasksManager.createEpic(epic));
 
             } else if (command == 6) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
+                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber);
                 Subtask subtask = new Subtask();
-                System.out.println(inMemoryTaskManager.createSubTask(epic, subtask));
+                System.out.println(fileBackedTasksManager.createSubTask(epic, subtask));
 
             } else if (command == 7) {
-                System.out.println(inMemoryTaskManager.clearAllTasks());
+                System.out.println(fileBackedTasksManager.clearAllTasks());
 
             } else if (command == 8) {
-                System.out.println(inMemoryTaskManager.clearAllEpic());
+                System.out.println(fileBackedTasksManager.clearAllEpic());
 
             } else if (command == 80) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.clearAllSubTasks(idNumber));
+                System.out.println(fileBackedTasksManager.clearAllSubTasks(idNumber));
 
             } else if (command == 9) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.getAnyTaskById(idNumber));
+                System.out.println(fileBackedTasksManager.getAnyTaskById(idNumber));
 
             } else if (command == 90) {
                 System.out.println("Введите ID эпик");
                 int epicIdNumber = scanner.nextInt();
                 System.out.println("Введите ID подзадачи");
                 int subtaskIdNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.getSubTaskById(epicIdNumber, subtaskIdNumber));
+                System.out.println(fileBackedTasksManager.getSubTaskById(epicIdNumber, subtaskIdNumber));
 
             } else if (command == 10) {
                 System.out.println("Введите ID");
                 Task newTask = new Task();
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.renewTaskById(newTask, idNumber));
+                System.out.println(fileBackedTasksManager.renewTaskById(newTask, idNumber));
 
             } else if (command == 11) {
                 System.out.println("Введите ID эпик");
                 Epic newEpic = new Epic();
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.renewEpicById(newEpic, idNumber));
+                System.out.println(fileBackedTasksManager.renewEpicById(newEpic, idNumber));
 
             } else if (command == 12) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
+                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber);
                 System.out.println("Введите ID подзадачи");
                 Subtask newSubTask = new Subtask();
                 int subIdNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.renewSubTaskById(epic, newSubTask, subIdNumber));
+                System.out.println(fileBackedTasksManager.renewSubTaskById(epic, newSubTask, subIdNumber));
 
             } else if (command == 13) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.clearTaskById(idNumber));
+                System.out.println(fileBackedTasksManager.clearTaskById(idNumber));
 
             } else if (command == 14) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.clearEpicById(idNumber));
+                System.out.println(fileBackedTasksManager.clearEpicById(idNumber));
 
             } else if (command == 15) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) inMemoryTaskManager.getAnyTaskById(idNumber);
+                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber);
                 System.out.println("Введите ID подзадачи");
                 int subIdNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.clearSubTaskById(epic, subIdNumber));
+                System.out.println(fileBackedTasksManager.clearSubTaskById(epic, subIdNumber));
 
             } else if (command == 16) {
-                System.out.println(inMemoryTaskManager.getTasksList() + " " + inMemoryTaskManager.getEpicsList());
+                System.out.println(fileBackedTasksManager.getTasksList() + " " + fileBackedTasksManager.getEpicsList());
 
             } else if (command == 17) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.getTaskStatusById(idNumber));
+                System.out.println(fileBackedTasksManager.getTaskStatusById(idNumber));
 
             } else if (command == 18) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(inMemoryTaskManager.getEpicStatusById(idNumber));
+                System.out.println(fileBackedTasksManager.getEpicStatusById(idNumber));
 
             } else if (command == 19) {
-                System.out.println(inMemoryTaskManager.getInMemoryHistoryManager().getHistory());
+                System.out.println(fileBackedTasksManager.getInMemoryHistoryManager().getHistory());
 
-            } else if (command == 0) {
+            } else if (command == 0) {                                        //сохранение состояния программы происходит во время выхода из нее
+                save(file, dir, fileBackedTasksManager);
                 break;
             }
         }

@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Epic extends Task {
+public class Epic extends Task implements Serializable {
     private HashMap<Integer, Subtask> subTaskList;
 
     public Epic() {
@@ -16,8 +17,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
-                "id=" + getId() +
-                '}';
+        return getId() + ", " + Name.Epic + ", " + getStatus() + ", " + getDescription();
     }
 }

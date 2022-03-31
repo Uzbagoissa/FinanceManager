@@ -5,14 +5,16 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager, Serializable {
     private HashMap<Integer, Task> taskList;
     private HashMap<Integer, Epic> epicList;
     private int idNumber;
     private HistoryManager inMemoryHistoryManager;
+
 
     public InMemoryTaskManager() {
         this.taskList = new HashMap<>();

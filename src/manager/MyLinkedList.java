@@ -2,12 +2,13 @@ package manager;
 
 import model.Task;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyLinkedList {
+public class MyLinkedList implements Serializable {
 
     Node<Task> first;
     Node<Task> last;
@@ -53,7 +54,7 @@ public class MyLinkedList {
         return list;
     }
 
-    static class Node<R> {
+    static class Node<R> implements Serializable {
         R data;
         Node<R> next;
         Node<R> prev;
