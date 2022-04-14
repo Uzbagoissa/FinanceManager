@@ -15,7 +15,6 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     private int idNumber;
     private HistoryManager inMemoryHistoryManager;
 
-
     public InMemoryTaskManager() {
         this.taskList = new HashMap<>();
         this.epicList = new HashMap<>();
@@ -66,12 +65,18 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
 
     @Override
     public HashMap clearAllTasks() {
+        for (Integer idNumber : taskList.keySet()) {
+            inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+        }
         taskList.clear();
         return taskList;
     }
 
     @Override
     public HashMap clearAllEpic() {
+        for (Integer idNumber : epicList.keySet()) {
+            inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+        }
         epicList.clear();
         return epicList;
     }
@@ -80,6 +85,9 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     public HashMap clearAllSubTasks(int idNumber) {
         Epic epic = epicList.get(idNumber);
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
+        for (Integer subtaskIdNumber : subTaskList.keySet()) {
+            inMemoryHistoryManager.remove(getSubTaskById(idNumber, subtaskIdNumber));
+        }
         subTaskList.clear();
         return subTaskList;
     }

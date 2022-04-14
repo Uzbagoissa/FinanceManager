@@ -10,6 +10,6 @@ public class Subtask extends Task implements Serializable {
 
     @Override
     public String toString() {
-        return getId() + ", " + Name.Subtask + ", " + getStatus() + ", " + getDescription();
+        return getId() + ", " + Name.SUBTASK + ", " + getStatus() + ", " + getDescription();
     }
 }

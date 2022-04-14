@@ -5,14 +5,8 @@ import java.io.Serializable;
 public class Task implements Serializable {
     private int id;
     private Name name;
-    private String description;
+    private String description = "Description";
     private Status status;
-
-    public Task() {
-        this.name = name;
-        this.description = "Description";
-        this.status = status;
-    }
 
     public int getId() {
         return id;
@@ -34,20 +28,12 @@ public class Task implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = Name.Task;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public String toString() {
-        return id + ", " + Name.Task + ", " + status + ", " + description;
+        return id + ", " + Name.TASK + ", " + status + ", " + description;
     }
 }
