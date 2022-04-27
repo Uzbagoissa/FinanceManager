@@ -100,7 +100,6 @@ public class Main implements Serializable {
                 System.out.println("Введите ID подзадачи");
                 int subtaskIdNumber = scanner.nextInt();
                 System.out.println(fileBackedTasksManager.getSubTaskById(epicIdNumber, subtaskIdNumber, file, dir, fileBackedTasksManager));
-                System.out.println("Нет такого эпика");
 
             } else if (command == 10) {
                 System.out.println("Введите ID");
@@ -142,7 +141,7 @@ public class Main implements Serializable {
                 System.out.println(fileBackedTasksManager.clearSubTaskById(epic, subIdNumber, file, dir, fileBackedTasksManager));
 
             } else if (command == 16) {
-                System.out.println(fileBackedTasksManager.getTasksList() + " " + fileBackedTasksManager.getEpicsList());
+                System.out.println(fileBackedTasksManager.getTasksList(file, dir, fileBackedTasksManager) + " " + fileBackedTasksManager.getEpicsList(file, dir, fileBackedTasksManager));
 
             } else if (command == 17) {
                 System.out.println("Введите ID");

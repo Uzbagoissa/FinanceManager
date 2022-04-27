@@ -66,7 +66,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     @Override
     public HashMap clearAllTasks() {
         for (Integer idNumber : taskList.keySet()) {
-            inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+            inMemoryHistoryManager.remove(taskList.get(idNumber));
         }
         taskList.clear();
         return taskList;
@@ -75,7 +75,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     @Override
     public HashMap clearAllEpic() {
         for (Integer idNumber : epicList.keySet()) {
-            inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+            inMemoryHistoryManager.remove(epicList.get(idNumber));
         }
         epicList.clear();
         return epicList;
@@ -86,7 +86,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
         Epic epic = epicList.get(idNumber);
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
         for (Integer subtaskIdNumber : subTaskList.keySet()) {
-            inMemoryHistoryManager.remove(getSubTaskById(idNumber, subtaskIdNumber));
+            inMemoryHistoryManager.remove(subTaskList.get(subtaskIdNumber));
         }
         subTaskList.clear();
         return subTaskList;
@@ -145,22 +145,22 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
 
     @Override
     public HashMap clearTaskById(int idNumber) {
-        inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+        inMemoryHistoryManager.remove(taskList.get(idNumber));
         taskList.remove(idNumber);
         return taskList;
     }
 
     @Override
     public HashMap clearEpicById(int idNumber) {
-        inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+        inMemoryHistoryManager.remove(epicList.get(idNumber));
         epicList.remove(idNumber);
         return epicList;
     }
 
     @Override
     public HashMap clearSubTaskById(Epic epic, int idNumber) {
-        inMemoryHistoryManager.remove(getSubTaskById(epic.getId(), idNumber));
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
+        inMemoryHistoryManager.remove(subTaskList.get(idNumber));
         subTaskList.remove(idNumber);
         changeEpicStatus(epic);
         return subTaskList;

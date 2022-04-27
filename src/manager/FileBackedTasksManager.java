@@ -115,7 +115,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     public HashMap clearAllTasks(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
         for (Integer idNumber : taskList.keySet()) {
-            inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+            inMemoryHistoryManager.remove(taskList.get(idNumber));
         }
         taskList.clear();
         save(file, dir, fileBackedTasksManager);
@@ -124,7 +124,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     public HashMap clearAllEpic(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
         for (Integer idNumber : epicList.keySet()) {
-            inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+            inMemoryHistoryManager.remove(epicList.get(idNumber));
         }
         epicList.clear();
         save(file, dir, fileBackedTasksManager);
@@ -135,7 +135,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         Epic epic = epicList.get(idNumber);
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
         for (Integer subtaskIdNumber : subTaskList.keySet()) {
-            inMemoryHistoryManager.remove(getSubTaskById(idNumber, subtaskIdNumber));
+            inMemoryHistoryManager.remove(subTaskList.get(subtaskIdNumber));
         }
         subTaskList.clear();
         save(file, dir, fileBackedTasksManager);
@@ -194,22 +194,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     public HashMap clearTaskById(int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
-        inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+        inMemoryHistoryManager.remove(taskList.get(idNumber));
         taskList.remove(idNumber);
         save(file, dir, fileBackedTasksManager);
         return taskList;
     }
 
     public HashMap clearEpicById(int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
-        inMemoryHistoryManager.remove(getAnyTaskById(idNumber));
+        inMemoryHistoryManager.remove(epicList.get(idNumber));
         epicList.remove(idNumber);
         save(file, dir, fileBackedTasksManager);
         return epicList;
     }
 
     public HashMap clearSubTaskById(Epic epic, int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
-        inMemoryHistoryManager.remove(getSubTaskById(epic.getId(), idNumber));
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
+        inMemoryHistoryManager.remove(subTaskList.get(idNumber));
         subTaskList.remove(idNumber);
         changeEpicStatus(epic);
         save(file, dir, fileBackedTasksManager);
