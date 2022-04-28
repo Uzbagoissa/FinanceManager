@@ -17,6 +17,6 @@ public class Epic extends Task implements Serializable {
 
     @Override
     public String toString() {
-        return getId() + ", " + Name.EPIC + ", " + getStatus() + ", " + getDescription();
+        return getId() + ", " + Name.EPIC + ", " + getStatus() + ", " + getDescription() + ", " + getStartTime() + ", " + getEndTime() + ", " + getDuration() + "\n";
     }
 }
