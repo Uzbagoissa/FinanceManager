@@ -19,7 +19,6 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     private ArrayList<Task> prioritizedTasksList;
     private int idNumber;
     private HistoryManager inMemoryHistoryManager;
-    TaskComparator taskComparator = new TaskComparator();
 
     public InMemoryTaskManager() {
         this.taskList = new HashMap<>();
@@ -241,7 +240,6 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     }
 
     public ArrayList getPrioritizedTasksList() {
-        prioritizedTasksList.sort(taskComparator);
         return prioritizedTasksList;
     }
 

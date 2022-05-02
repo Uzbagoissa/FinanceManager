@@ -1,5 +1,6 @@
-package manager;
+package test;
 
+import manager.InMemoryTaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;

@@ -18,16 +18,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private HashMap<Integer, Task> taskList;
     private HashMap<Integer, Epic> epicList;
     private ArrayList<Integer> taskInProgressList;
-    private ArrayList<Task> prioritizedTasksList;
+    private TreeSet<Task> prioritizedTasksList;
     private int idNumber;
     private HistoryManager inMemoryHistoryManager;
-    TaskComparator taskComparator = new TaskComparator();
+
+    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(Task::getId);
 
     public FileBackedTasksManager(File file, String dir) {
         this.taskList = new HashMap<>();
         this.epicList = new HashMap<>();
         this.taskInProgressList = new ArrayList<>();
-        this.prioritizedTasksList = new ArrayList<>();          //TreeSet не осилил. Сделал с ArrayList
+        this.prioritizedTasksList = new TreeSet<>(taskComparator);
         this.idNumber = 0;
         this.inMemoryHistoryManager = Managers.getDefaultHistory();
         this.file = file;
@@ -288,8 +289,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    public ArrayList getPrioritizedTasksList(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
-        prioritizedTasksList.sort(taskComparator);
+    public TreeSet getPrioritizedTasksList(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
         return prioritizedTasksList;
     }
 
