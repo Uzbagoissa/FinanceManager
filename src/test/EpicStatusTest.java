@@ -4,47 +4,49 @@ import manager.InMemoryTaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicStatusTest {    /* Расчёт статуса Epic
                            тестируем void changeEpicStatus(Epic epic)*/
-    @Test
-    public void shouldReturnNEWwhenNoSubtask() {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        Epic epic = new Epic();
+
+    InMemoryTaskManager inMemoryTaskManager;
+    Epic epic;
+    Subtask subtask;
+    Subtask subtask1;
+    Subtask subtask2;
+    String startTime1;
+    String startTime2;
+    String startTime3;
+    int duration;
+
+    @BeforeEach
+    public void beforeEach() {
+        startTime1 = "2000-02-01T01:00:00.000000000";
+        startTime2 = "2001-01-01T01:00:00.000000000";
+        startTime3 = "2002-01-01T01:00:00.000000000";
+        duration = 3;
+        inMemoryTaskManager = new InMemoryTaskManager();
+        epic = new Epic();
         inMemoryTaskManager.createEpic(epic);
-        inMemoryTaskManager.changeEpicStatus(epic);
-        assertEquals(Status.NEW, epic.getStatus());
+        subtask = new Subtask();
+        subtask1 = new Subtask();
+        subtask2 = new Subtask();
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask1, startTime2, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask2, startTime3, duration);
     }
 
     @Test
     public void shouldReturnNEWwhenAllSubtaskNEW() {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        Epic epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
-        Subtask subtask = new Subtask();
-        Subtask subtask1 = new Subtask();
-        Subtask subtask2 = new Subtask();
-        inMemoryTaskManager.createSubTask(epic, subtask);
-        inMemoryTaskManager.createSubTask(epic, subtask1);
-        inMemoryTaskManager.createSubTask(epic, subtask2);
         inMemoryTaskManager.changeEpicStatus(epic);
         assertEquals(Status.NEW, epic.getStatus());
     }
 
     @Test
     public void shouldReturnDONEwhenAllSubtaskDONE(){
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        Epic epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
-        Subtask subtask = new Subtask();
-        Subtask subtask1 = new Subtask();
-        Subtask subtask2 = new Subtask();
-        inMemoryTaskManager.createSubTask(epic, subtask);
-        inMemoryTaskManager.createSubTask(epic, subtask1);
-        inMemoryTaskManager.createSubTask(epic, subtask2);
         subtask.setStatus(Status.DONE);
         subtask1.setStatus(Status.DONE);
         subtask2.setStatus(Status.DONE);
@@ -53,16 +55,7 @@ class EpicStatusTest {    /* Расчёт статуса Epic
     }
 
     @Test
-    public void shouldReturnIN_PROGRESSwhenSubtaskDONEandNEW() {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        Epic epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
-        Subtask subtask = new Subtask();
-        Subtask subtask1 = new Subtask();
-        Subtask subtask2 = new Subtask();
-        inMemoryTaskManager.createSubTask(epic, subtask);
-        inMemoryTaskManager.createSubTask(epic, subtask1);
-        inMemoryTaskManager.createSubTask(epic, subtask2);
+    public void shouldReturnINPROGRESSwhenSubtaskDONEandNEW() {
         subtask.setStatus(Status.NEW);
         subtask1.setStatus(Status.DONE);
         subtask2.setStatus(Status.NEW);
@@ -71,16 +64,7 @@ class EpicStatusTest {    /* Расчёт статуса Epic
     }
 
     @Test
-    public void shouldReturnIN_PROGRESSwhenSubtaskIN_PROGRESS(){
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        Epic epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
-        Subtask subtask = new Subtask();
-        Subtask subtask1 = new Subtask();
-        Subtask subtask2 = new Subtask();
-        inMemoryTaskManager.createSubTask(epic, subtask);
-        inMemoryTaskManager.createSubTask(epic, subtask1);
-        inMemoryTaskManager.createSubTask(epic, subtask2);
+    public void shouldReturnINPROGRESSwhenSubtaskIN_PROGRESS(){
         subtask.setStatus(Status.IN_PROGRESS);
         subtask1.setStatus(Status.IN_PROGRESS);
         subtask2.setStatus(Status.IN_PROGRESS);
@@ -89,21 +73,26 @@ class EpicStatusTest {    /* Расчёт статуса Epic
     }
 
     @Test
-    public void shouldReturnIN_PROGRESSwhenSubtaskIN_PROGRESSandDONEandNEW(){
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        Epic epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
-        Subtask subtask = new Subtask();
-        Subtask subtask1 = new Subtask();
-        Subtask subtask2 = new Subtask();
-        inMemoryTaskManager.createSubTask(epic, subtask);
-        inMemoryTaskManager.createSubTask(epic, subtask1);
-        inMemoryTaskManager.createSubTask(epic, subtask2);
-        subtask.setStatus(Status.IN_PROGRESS);
-        subtask1.setStatus(Status.NEW);
+    public void shouldReturnINPROGRESSwhenSubtaskIN_PROGRESSandDONEandNEW(){
+        subtask.setStatus(Status.NEW);
+        subtask1.setStatus(Status.IN_PROGRESS);
         subtask2.setStatus(Status.DONE);
         inMemoryTaskManager.changeEpicStatus(epic);
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
+    }
+
+}
+
+class EpicStatusTestWithNoSubtasks {    /* Расчёт статуса Epic
+                                           тестируем void changeEpicStatus(Epic epic) без подзадач*/
+
+    @Test
+    public void shouldReturnNEWwhenNoSubtask() {
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        Epic epic = new Epic();
+        inMemoryTaskManager.createEpic(epic);
+        inMemoryTaskManager.changeEpicStatus(epic);
+        assertEquals(Status.NEW, epic.getStatus());
     }
 
 }

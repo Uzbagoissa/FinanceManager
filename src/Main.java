@@ -48,12 +48,7 @@ public class Main implements Serializable {
             System.out.println("18 - Узнать статус эпик задачи по ID");
             System.out.println("19 - Показать последние просмотренные задачи");
 
-            System.out.println("20 - Начать обычную задачу сейчас");
-            System.out.println("21 - Начать эпик задачу сейчас");
-            System.out.println("22 - Закончить задачу сейчас");
-            System.out.println("23 - Закончить эпик задачу сейчас");
-            System.out.println("24 - Запланировать выполнение задач на будущее");
-            System.out.println("25 - Показать отсортированный список задач");
+            System.out.println("20 - Показать отсортированный список задач");
 
             System.out.println("0 - Выход");
 
@@ -73,7 +68,11 @@ public class Main implements Serializable {
 
             } else if (command == 4) {
                 Task task = new Task();
-                System.out.println(fileBackedTasksManager.createTask(task, file, dir, fileBackedTasksManager));
+                System.out.println("Введите дату и время начала задачи по образцу: 2022-05-01T21:46:39.110446100");
+                String startTime = scanner.next();
+                System.out.println("Введите продолжительность задачи в часах");
+                int duration = scanner.nextInt();
+                System.out.println(fileBackedTasksManager.createTask(task, startTime, duration, file, dir, fileBackedTasksManager));
 
             } else if (command == 5) {
                 Epic epic = new Epic();
@@ -84,7 +83,11 @@ public class Main implements Serializable {
                 int idNumber = scanner.nextInt();
                 Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
                 Subtask subtask = new Subtask();
-                System.out.println(fileBackedTasksManager.createSubTask(epic, subtask, file, dir, fileBackedTasksManager));
+                System.out.println("Введите дату и время начала задачи по образцу: 2022-05-01T21:46:39.110446100");
+                String startTime = scanner.next();
+                System.out.println("Введите продолжительность задачи в часах");
+                int duration = scanner.nextInt();
+                System.out.println(fileBackedTasksManager.createSubTask(epic, subtask, startTime, duration, file, dir, fileBackedTasksManager));
 
             } else if (command == 7) {
                 System.out.println(fileBackedTasksManager.clearAllTasks(file, dir, fileBackedTasksManager));
@@ -178,86 +181,6 @@ public class Main implements Serializable {
                 System.out.println(fileBackedTasksManager.getInMemoryHistoryManager(file, dir, fileBackedTasksManager).getHistory());
 
             } else if (command == 20) {
-                System.out.println("Введите ID задачи");
-                int idNumber = scanner.nextInt();
-                String startTime = "now";
-                fileBackedTasksManager.startTask(idNumber, startTime, file, dir, fileBackedTasksManager);
-
-            } else if (command == 21) {
-                System.out.println("Введите ID эпик");
-                int idNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
-                if (epic.getSubTasksList().isEmpty()){
-                    System.out.println("В этом эпике нет подзадач. Создайте хотя бы одну подзадачу, чтобы приступить к выполнению этой Epic задачи");
-                } else {
-                    System.out.println("Введите ID подзадачи");
-                    int subIdNumber = scanner.nextInt();
-                    String startTime = "now";
-                    fileBackedTasksManager.startEpic(idNumber, subIdNumber, startTime, file, dir, fileBackedTasksManager);
-                }
-
-            } else if (command == 22) {
-                System.out.println("Введите ID задачи");
-                int idNumber = scanner.nextInt();
-                String finishTime = "now";
-                fileBackedTasksManager.finishTask(idNumber, finishTime, file, dir, fileBackedTasksManager);
-
-            } else if (command == 23) {
-                System.out.println("Введите ID эпик задачи");
-                int idNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
-                if (epic.getSubTasksList().isEmpty()){
-                    System.out.println("В этом эпике нет подзадач");
-                } else {
-                    System.out.println("Введите ID подзадачи");
-                    int subIdNumber = scanner.nextInt();
-                    String finishTime = "now";
-                    fileBackedTasksManager.finishEpic(idNumber, subIdNumber, finishTime, file, dir, fileBackedTasksManager);
-                }
-
-            } else if (command == 24) {
-                while (true) {
-                    System.out.println("Выполнение какой задачи вы хотите запланировать?");
-                    System.out.println("1 - Обычную задачу");
-                    System.out.println("2 - Эпик задачу");
-                    System.out.println("3 - Никакую");
-
-                    int commandd = scanner.nextInt();
-
-                    if (commandd == 1) {
-                        System.out.println("Введите ID задачи");
-                        int idNumber = scanner.nextInt();
-                        System.out.println("Введите дату и время начала задачи по образцу: 2022-05-01T21:46:39.110446100");
-                        String startTime = scanner.next();
-                        fileBackedTasksManager.startTask(idNumber, startTime, file, dir, fileBackedTasksManager);
-                        System.out.println("Введите дату и время окончания задачи по образцу: 2022-05-01T21:46:39.110446100");
-                        String finishTime = scanner.next();
-                        fileBackedTasksManager.finishTask(idNumber, finishTime, file, dir, fileBackedTasksManager);
-                        System.out.println(fileBackedTasksManager.getPrioritizedTasksList(file, dir, fileBackedTasksManager));
-
-                    } else if (commandd == 2) {
-                        System.out.println("Введите ID эпик");
-                        int idNumber = scanner.nextInt();
-                        Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
-                        if (epic.getSubTasksList().isEmpty()){
-                            System.out.println("В этом эпике нет подзадач. Создайте хотя бы одну подзадачу, чтобы приступить к выполнению этой Epic задачи");
-                        } else {
-                            System.out.println("Введите ID подзадачи");
-                            int subIdNumber = scanner.nextInt();
-                            System.out.println("Введите дату и время начала эпик задачи по образцу: 2022-05-01T21:46:39.110446100");
-                            String startTime = scanner.next();
-                            fileBackedTasksManager.startEpic(idNumber, subIdNumber, startTime, file, dir, fileBackedTasksManager);
-                            System.out.println("Введите дату и время окончания эпик задачи по образцу: 2022-05-01T21:46:39.110446100");
-                            String finishTime = scanner.next();
-                            fileBackedTasksManager.finishEpic(idNumber, subIdNumber, finishTime, file, dir, fileBackedTasksManager);
-                        }
-
-                    } else if (commandd == 3) {
-                        break;
-                    }
-                }
-
-            } else if (command == 25) {
                 System.out.println(fileBackedTasksManager.getPrioritizedTasksList(file, dir, fileBackedTasksManager));
 
             } else if (command == 0) {

@@ -66,5 +66,3 @@ public class MyLinkedList implements Serializable {
         }
     }
 }
-
-

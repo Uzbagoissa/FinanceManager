@@ -4,15 +4,28 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TaskManager {
 
-    HashMap createTask(Task task);
+    void changeEpicTime(Epic epic, Subtask subtask);
+
+    void changeEpicStatus(Epic epic);
+
+    ArrayList getPrioritizedTasksList();
+
+    HashMap getTasksList();
+
+    HashMap getEpicsList();
+
+    HistoryManager getInMemoryHistoryManager();
+
+    HashMap createTask(Task task, String startTime, int duration);
 
     HashMap createEpic(Epic epic);
 
-    HashMap createSubTask(Epic epic, Subtask subtask);
+    HashMap createSubTask(Epic epic, Subtask subtask, String startTime, int duration);
 
     HashMap clearAllTasks();
 
