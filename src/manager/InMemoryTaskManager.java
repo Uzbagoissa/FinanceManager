@@ -5,32 +5,41 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager, Serializable {
     private HashMap<Integer, Task> taskList;
     private HashMap<Integer, Epic> epicList;
-    private ArrayList<Task> prioritizedTasksList;
+    /*private ArrayList<Task> prioritizedTasksList;*/
+    private TreeSet<Task> prioritizedTasksList;
     private int idNumber;
     private HistoryManager inMemoryHistoryManager;
-    TaskComparator taskComparator = new TaskComparator();
+    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime,
+                    Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(Task::getId);
+    /*TaskComparator taskComparator = new TaskComparator();*/
 
     public InMemoryTaskManager() {
         this.taskList = new HashMap<>();
         this.epicList = new HashMap<>();
-        this.prioritizedTasksList = new ArrayList<>();
+        this.prioritizedTasksList = new TreeSet<>(taskComparator);
+        /*this.prioritizedTasksList = new ArrayList<>();*/
         this.idNumber = 0;
         this.inMemoryHistoryManager = Managers.getDefaultHistory();
     }
 
-    @Override
+    /*@Override
     public ArrayList getPrioritizedTasksList() {
         prioritizedTasksList.sort(taskComparator);
+        return prioritizedTasksList;
+    }*/
+
+    public TreeSet getPrioritizedTasksList() {
         return prioritizedTasksList;
     }
 

@@ -6,6 +6,7 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -13,7 +14,9 @@ public interface TaskManager {
 
     void changeEpicStatus(Epic epic);
 
-    ArrayList getPrioritizedTasksList();
+    /*ArrayList getPrioritizedTasksList();*/
+
+    TreeSet getPrioritizedTasksList();
 
     HashMap getTasksList();
 

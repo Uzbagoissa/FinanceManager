@@ -10,32 +10,40 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager, Serializable {
     String dir;
     File file;
     private HashMap<Integer, Task> taskList;
     private HashMap<Integer, Epic> epicList;
-    private ArrayList<Task> prioritizedTasksList;
+    private TreeSet<Task> prioritizedTasksList;
+    /*private ArrayList<Task> prioritizedTasksList;*/
+
     private int idNumber;
     private HistoryManager inMemoryHistoryManager;
-    TaskComparator taskComparator = new TaskComparator();
+    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime,
+                    Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(Task::getId);
+    /*TaskComparator taskComparator = new TaskComparator();*/
 
     public FileBackedTasksManager(File file, String dir) {
         this.taskList = new HashMap<>();
         this.epicList = new HashMap<>();
-        this.prioritizedTasksList = new ArrayList<>();
+        this.prioritizedTasksList = new TreeSet<>(taskComparator);
+        /*this.prioritizedTasksList = new ArrayList<>();*/
         this.idNumber = 0;
         this.inMemoryHistoryManager = Managers.getDefaultHistory();
         this.file = file;
         this.dir = dir;
     }
 
-    public ArrayList getPrioritizedTasksList(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    /*public ArrayList getPrioritizedTasksList(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
         prioritizedTasksList.sort(taskComparator);
+        return prioritizedTasksList;
+    }*/
+
+    public TreeSet getPrioritizedTasksList(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
         return prioritizedTasksList;
     }
 
