@@ -5,7 +5,7 @@ import model.Task;
 import java.io.Serializable;
 import java.util.Comparator;
 
-/*public class TaskComparator implements Comparator<Task>, Serializable {
+public class TaskComparator implements Comparator<Task>, Serializable {
 
     @Override
     public int compare (Task x, Task y) {
@@ -24,4 +24,4 @@ import java.util.Comparator;
         return o;
     }
 
-}*/
+}

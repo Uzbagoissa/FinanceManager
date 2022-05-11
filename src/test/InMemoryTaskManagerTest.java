@@ -9,8 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь тестируются методы класса InMemoryTaskManager
+public class InMemoryTaskManagerTest extends TaskManagerTest{           //здесь тестируются методы класса InMemoryTaskManager
+    String startTime;
     String startTime1;
     String startTime2;
     String startTime3;
@@ -24,6 +26,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @BeforeEach
     public void beforeEach() {
+        startTime = "2000-01-01T01:00:00.000000000";
         startTime1 = "2000-02-01T01:00:00.000000000";
         startTime2 = "2001-01-01T01:00:00.000000000";
         startTime3 = "2002-01-01T01:00:00.000000000";
@@ -45,13 +48,13 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void createEpic() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime1, duration);
         assertEquals(epic1, taskManager.getAnyTaskById(1), "Задача не создалась");
     }
 
     @Test
     public void createSubTask() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime1, duration);
         Subtask subtask = new Subtask();
         taskManager.createSubTask(epic1, subtask, startTime1, duration);
         assertEquals(epic1, taskManager.getAnyTaskById(1), "Задача не создалась");
@@ -69,9 +72,9 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void clearAllEpic() {
-        taskManager.createEpic(epic1);
-        taskManager.createEpic(epic2);
-        taskManager.createEpic(epic3);
+        taskManager.createEpic(epic1, startTime1, duration);
+        taskManager.createEpic(epic2, startTime2, duration);
+        taskManager.createEpic(epic3, startTime3, duration);
         assertFalse(taskManager.getEpicsList().isEmpty(), "Список пуст!");
         taskManager.clearAllEpic();
         assertTrue(taskManager.getEpicsList().isEmpty(), "Список не пуст! В нем Task задачи!");
@@ -79,7 +82,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void clearAllSubTasks() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime1, duration);
         Subtask subtask1 = new Subtask();
         Subtask subtask2 = new Subtask();
         Subtask subtask3 = new Subtask();
@@ -94,7 +97,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
     @Test
     public void getAnyTaskById() {
         taskManager.createTask(task1, startTime1, duration);
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime2, duration);
         assertEquals(task1, taskManager.getAnyTaskById(1), "Метод не работает");
         assertEquals(epic1, taskManager.getAnyTaskById(2), "Метод не работает");
         assertNull(taskManager.getAnyTaskById(3), "Метод странно работает");
@@ -102,7 +105,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void getSubTaskById() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime, duration);
         Subtask subtask = new Subtask();
         taskManager.createSubTask(epic1, subtask, startTime1, duration);
         assertEquals(subtask, taskManager.getSubTaskById(1, 2), "Метод не работает");
@@ -123,9 +126,9 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void renewEpicById() {
-        taskManager.createEpic(epic1);
-        taskManager.createEpic(epic2);
-        taskManager.createEpic(epic3);
+        taskManager.createEpic(epic1, startTime1, duration);
+        taskManager.createEpic(epic2, startTime2, duration);
+        taskManager.createEpic(epic3, startTime3, duration);
         assertTrue(taskManager.getEpicsList().containsValue(epic2), "В списке нет epic2");
         Epic newEpic = new Epic();
         taskManager.renewEpicById(newEpic, 2);
@@ -135,7 +138,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void renewSubtaskById() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime, duration);
         Subtask subtask1 = new Subtask();
         Subtask subtask2 = new Subtask();
         Subtask subtask3 = new Subtask();
@@ -161,9 +164,9 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void clearEpicById() {
-        taskManager.createEpic(epic1);
-        taskManager.createEpic(epic2);
-        taskManager.createEpic(epic3);
+        taskManager.createEpic(epic1, startTime1, duration);
+        taskManager.createEpic(epic2, startTime2, duration);
+        taskManager.createEpic(epic3, startTime3, duration);
         assertTrue(taskManager.getEpicsList().containsValue(epic2), "В списке нет epic2");
         taskManager.clearEpicById(2);
         assertFalse(taskManager.getEpicsList().containsValue(epic2), "В списке есть epic2");
@@ -171,7 +174,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void clearSubTaskById() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime, duration);
         Subtask subtask1 = new Subtask();
         Subtask subtask2 = new Subtask();
         Subtask subtask3 = new Subtask();
@@ -195,7 +198,7 @@ public class InMemoryTaskManagerTestt extends TaskManagerTest{      //здесь
 
     @Test
     public void getEpicStatusById() {
-        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic1, startTime1, duration);
         assertEquals(Status.NEW.toString(), taskManager.getEpicStatusById(1), "Метод не работает");
         epic1.setStatus(Status.DONE);
         assertEquals(Status.DONE.toString(), taskManager.getEpicStatusById(1), "Метод не работает");

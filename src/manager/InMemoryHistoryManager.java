@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager, Serializable {
-    private MyLinkedList linkedHistory = new MyLinkedList();
+    private final MyLinkedList linkedHistory = new MyLinkedList();
 
     @Override
     public List<Task> getHistory() {

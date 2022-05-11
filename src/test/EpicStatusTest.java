@@ -7,7 +7,7 @@ import model.Subtask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EpicStatusTest {    /* Расчёт статуса Epic
                            тестируем void changeEpicStatus(Epic epic)*/
@@ -17,6 +17,7 @@ class EpicStatusTest {    /* Расчёт статуса Epic
     Subtask subtask;
     Subtask subtask1;
     Subtask subtask2;
+    String startTime;
     String startTime1;
     String startTime2;
     String startTime3;
@@ -24,13 +25,14 @@ class EpicStatusTest {    /* Расчёт статуса Epic
 
     @BeforeEach
     public void beforeEach() {
+        startTime = "2000-01-01T01:00:00.000000000";
         startTime1 = "2000-02-01T01:00:00.000000000";
         startTime2 = "2001-01-01T01:00:00.000000000";
         startTime3 = "2002-01-01T01:00:00.000000000";
         duration = 3;
         inMemoryTaskManager = new InMemoryTaskManager();
         epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         subtask = new Subtask();
         subtask1 = new Subtask();
         subtask2 = new Subtask();
@@ -90,7 +92,9 @@ class EpicStatusTestWithNoSubtasks {    /* Расчёт статуса Epic
     public void shouldReturnNEWwhenNoSubtask() {
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
         Epic epic = new Epic();
-        inMemoryTaskManager.createEpic(epic);
+        String startTime = "2000-01-01T01:00:00.000000000";
+        int duration = 3;
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         inMemoryTaskManager.changeEpicStatus(epic);
         assertEquals(Status.NEW, epic.getStatus());
     }

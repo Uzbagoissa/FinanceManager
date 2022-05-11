@@ -6,7 +6,6 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -14,43 +13,41 @@ public interface TaskManager {
 
     void changeEpicStatus(Epic epic);
 
-    /*ArrayList getPrioritizedTasksList();*/
+    ArrayList<Task> getPrioritizedTasksList();
 
-    TreeSet getPrioritizedTasksList();
+    HashMap<Integer, Task> getTasksList();
 
-    HashMap getTasksList();
-
-    HashMap getEpicsList();
+    HashMap<Integer, Epic> getEpicsList();
 
     HistoryManager getInMemoryHistoryManager();
 
-    HashMap createTask(Task task, String startTime, int duration);
+    HashMap<Integer, Task> createTask(Task task, String startTime, int duration);
 
-    HashMap createEpic(Epic epic);
+    HashMap<Integer, Epic> createEpic(Epic epic, String startTime, int duration);
 
-    HashMap createSubTask(Epic epic, Subtask subtask, String startTime, int duration);
+    HashMap<Integer, Subtask> createSubTask(Epic epic, Subtask subtask, String startTime, int duration);
 
-    HashMap clearAllTasks();
+    HashMap<Integer, Task> clearAllTasks();
 
-    HashMap clearAllEpic();
+    HashMap<Integer, Epic> clearAllEpic();
 
-    HashMap clearAllSubTasks(int idNumber);
+    HashMap<Integer, Subtask> clearAllSubTasks(int idNumber);
 
     Task getAnyTaskById(int idNumber);
 
     Subtask getSubTaskById(int epicIdNumber, int subtaskIdNumber);
 
-    HashMap renewTaskById(Task newTask, int idNumber);
+    HashMap<Integer, Task> renewTaskById(Task newTask, int idNumber);
 
-    HashMap renewEpicById(Epic newEpic, int idNumber);
+    HashMap<Integer, Epic> renewEpicById(Epic newEpic, int idNumber);
 
-    HashMap renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber);
+    HashMap<Integer, Subtask> renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber);
 
-    HashMap clearTaskById(int idNumber);
+    HashMap<Integer, Task> clearTaskById(int idNumber);
 
-    HashMap clearEpicById(int idNumber);
+    HashMap<Integer, Epic> clearEpicById(int idNumber);
 
-    HashMap clearSubTaskById(Epic epic, int idNumber);
+    HashMap<Integer, Subtask> clearSubTaskById(Epic epic, int idNumber);
 
     String getTaskStatusById(int idNumber);
 

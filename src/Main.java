@@ -11,8 +11,8 @@ public class Main implements Serializable {
         String dir = System.getProperty("user.dir");
         File file = new File("backend.txt");
 
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file, dir);
-        fileBackedTasksManager = fileBackedTasksManager.loadFromFile(file, dir);
+        FileBackedTasksManager fileBackedTasksManager;
+        fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file, dir);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -55,10 +55,10 @@ public class Main implements Serializable {
             int command = scanner.nextInt();
 
             if (command == 1) {
-                System.out.println(fileBackedTasksManager.getTasksList(file, dir, fileBackedTasksManager));
+                System.out.println(fileBackedTasksManager.getTasksList());
 
             } else if (command == 2) {
-                System.out.println(fileBackedTasksManager.getEpicsList(file, dir, fileBackedTasksManager));
+                System.out.println(fileBackedTasksManager.getEpicsList());
 
             } else if (command == 3) {
                 System.out.println("Введите ID эпик");
@@ -76,7 +76,11 @@ public class Main implements Serializable {
 
             } else if (command == 5) {
                 Epic epic = new Epic();
-                System.out.println(fileBackedTasksManager.createEpic(epic, file, dir, fileBackedTasksManager));
+                System.out.println("Введите дату и время начала задачи по образцу: 2022-05-01T21:46:39.110446100");
+                String startTime = scanner.next();
+                System.out.println("Введите продолжительность задачи в часах");
+                int duration = scanner.nextInt();
+                System.out.println(fileBackedTasksManager.createEpic(epic, startTime, duration, file, dir, fileBackedTasksManager));
 
             } else if (command == 6) {
                 System.out.println("Введите ID эпик");
@@ -165,23 +169,23 @@ public class Main implements Serializable {
                 }
 
             } else if (command == 16) {
-                System.out.println(fileBackedTasksManager.getTasksList(file, dir, fileBackedTasksManager) + " " + fileBackedTasksManager.getEpicsList(file, dir, fileBackedTasksManager));
+                System.out.println(fileBackedTasksManager.getTasksList() + " " + fileBackedTasksManager.getEpicsList());
 
             } else if (command == 17) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.getTaskStatusById(idNumber, file, dir, fileBackedTasksManager));
+                System.out.println(fileBackedTasksManager.getTaskStatusById(idNumber));
 
             } else if (command == 18) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.getEpicStatusById(idNumber, file, dir, fileBackedTasksManager));
+                System.out.println(fileBackedTasksManager.getEpicStatusById(idNumber));
 
             } else if (command == 19) {
-                System.out.println(fileBackedTasksManager.getInMemoryHistoryManager(file, dir, fileBackedTasksManager).getHistory());
+                System.out.println(fileBackedTasksManager.getInMemoryHistoryManager().getHistory());
 
             } else if (command == 20) {
-                System.out.println(fileBackedTasksManager.getPrioritizedTasksList(file, dir, fileBackedTasksManager));
+                System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
 
             } else if (command == 0) {
                 break;

@@ -8,10 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTaskManagerTestt extends TaskManagerTest {   //здесь тестируются методы класса FileBackedTasksManager,
+public class FileBackedTaskManagerTest extends TaskManagerTest {   //здесь тестируются методы класса FileBackedTasksManager,
 
 
     FileBackedTasksManager fileBackedTasksManager;
@@ -33,7 +32,9 @@ public class FileBackedTaskManagerTestt extends TaskManagerTest {   //здесь
     @Test
     public void saveAndLoadWithEpicWithoutSubtasks() throws IOException, ClassNotFoundException {
         Epic epic = new Epic();
-        fileBackedTasksManager.createEpic(epic, file, dir, fileBackedTasksManager);
+        String startTime = "2000-01-01T01:00:00.000000000";
+        int duration = 3;
+        fileBackedTasksManager.createEpic(epic, startTime, duration, file, dir, fileBackedTasksManager);
         fileBackedTasksManager.save(file, dir, fileBackedTasksManager);
         FileBackedTasksManager.loadFromFile(file, dir);
         assertEquals(epic, fileBackedTasksManager.getAnyTaskById(1, file, dir, fileBackedTasksManager), "Сохранения состояния не произошло");
