@@ -34,88 +34,88 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return super.getInMemoryHistoryManager();
     }
 
-    public HashMap<Integer, Task> createTask(Task task, String startTime, int duration, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Task> createTask(Task task, String startTime, int duration,  FileBackedTasksManager fileBackedTasksManager) {
         super.createTask(task, startTime, duration);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> createEpic(Epic epic, String startTime, int duration, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Epic> createEpic(Epic epic, String startTime, int duration,  FileBackedTasksManager fileBackedTasksManager) {
         super.createEpic(epic, startTime, duration);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> createSubTask(Epic epic, Subtask subtask, String startTime, int duration, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Subtask> createSubTask(Epic epic, Subtask subtask, String startTime, int duration,  FileBackedTasksManager fileBackedTasksManager) {
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
         super.createSubTask(epic, subtask, startTime, duration);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return subTaskList;
     }
 
-    public HashMap<Integer, Task> clearAllTasks(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Task> clearAllTasks( FileBackedTasksManager fileBackedTasksManager) {
         super.clearAllTasks();
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> clearAllEpic(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Epic> clearAllEpic( FileBackedTasksManager fileBackedTasksManager) {
         super.clearAllEpic();
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> clearAllSubTasks(int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Subtask> clearAllSubTasks(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         HashMap<Integer, Subtask> subTaskList = super.clearAllSubTasks(idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return subTaskList;
     }
 
-    public Task getAnyTaskById(int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public Task getAnyTaskById(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         Task task = super.getAnyTaskById(idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return task;
     }
 
-    public Subtask getSubTaskById(int epicIdNumber, int subtaskIdNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException{
+    public Subtask getSubTaskById(int epicIdNumber, int subtaskIdNumber,  FileBackedTasksManager fileBackedTasksManager){
         Subtask subtask = super.getSubTaskById(epicIdNumber, subtaskIdNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return subtask;
     }
 
-    public HashMap<Integer, Task> renewTaskById(Task newTask, int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Task> renewTaskById(Task newTask, int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         super.renewTaskById(newTask, idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> renewEpicById(Epic newEpic, int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Epic> renewEpicById(Epic newEpic, int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         super.renewEpicById(newEpic, idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Subtask> renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         HashMap<Integer, Subtask> subTaskList = super.renewSubTaskById(epic, newSubTask, idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return subTaskList;
     }
 
-    public HashMap<Integer, Task> clearTaskById(int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Task> clearTaskById(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         super.clearTaskById(idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> clearEpicById(int idNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Epic> clearEpicById(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
         super.clearEpicById(idNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> clearSubTaskById(Epic epic, int subIdNumber, File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public HashMap<Integer, Subtask> clearSubTaskById(Epic epic, int subIdNumber,  FileBackedTasksManager fileBackedTasksManager) {
         HashMap<Integer, Subtask> subTaskList = super.clearSubTaskById(epic, subIdNumber);
-        save(file, dir, fileBackedTasksManager);
+        save(fileBackedTasksManager);
         return subTaskList;
     }
 
@@ -141,7 +141,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             fileBackedTasksManager = new FileBackedTasksManager(file, dir);
         }
         if (file.exists()) {
-            try (FileInputStream fileInputStream = new FileInputStream("backend.txt"); ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            try (FileInputStream fileInputStream = new FileInputStream(file); ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
                 fileBackedTasksManager = (FileBackedTasksManager) objectInputStream.readObject();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -150,22 +150,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return fileBackedTasksManager;
     }
 
-    public void save(File file, String dir, FileBackedTasksManager fileBackedTasksManager) throws IOException{
+    public void save(FileBackedTasksManager fileBackedTasksManager){
         FileOutputStream fileOutputStream = null;
         ObjectOutputStream objectOutputStream = null;
         try {
             if (!file.exists()) {
                 Files.createFile(Paths.get(dir, "backend.txt"));
             }
-            fileOutputStream = new FileOutputStream("backend.txt");
+            fileOutputStream = new FileOutputStream(file);
             objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(fileBackedTasksManager);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            assert objectOutputStream != null;
-            objectOutputStream.close();
-            fileOutputStream.close();
+            try {
+                assert objectOutputStream != null;
+                objectOutputStream.close();
+                fileOutputStream.close();
+            } catch (IOException ex){
+                ex.printStackTrace();
+            }
         }
     }
 

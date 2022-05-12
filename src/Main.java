@@ -1,18 +1,39 @@
+import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpServer;
 import manager.FileBackedTasksManager;
+import manager.HttpTaskServer;
+import manager.KVServer;
 import model.Epic;
 import model.Subtask;
 import model.Task;
 
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Scanner;
 
 public class Main implements Serializable {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    private static final int PORT = 8080;
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         String dir = System.getProperty("user.dir");
         File file = new File("backend.txt");
 
         FileBackedTasksManager fileBackedTasksManager;
         fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file, dir);
+
+        HttpServer httpServer = HttpServer.create();
+        httpServer.bind(new InetSocketAddress(PORT), 0);
+        httpServer.createContext("/tasks", new HttpTaskServer(fileBackedTasksManager));
+        httpServer.start();
+
+        new KVServer().start();
+
+        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+
+        HttpClient client = HttpClient.newHttpClient();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -55,16 +76,24 @@ public class Main implements Serializable {
             int command = scanner.nextInt();
 
             if (command == 1) {
-                System.out.println(fileBackedTasksManager.getTasksList());
+                URI url = URI.create("http://localhost:8080/tasks/taskList/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 2) {
-                System.out.println(fileBackedTasksManager.getEpicsList());
+                URI url = URI.create("http://localhost:8080/tasks/epicList/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 3) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
-                System.out.println(epic.getSubTasksList());
+                URI url = URI.create("http://localhost:8080/tasks/subTaskList/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 4) {
                 Task task = new Task();
@@ -72,7 +101,14 @@ public class Main implements Serializable {
                 String startTime = scanner.next();
                 System.out.println("Введите продолжительность задачи в часах");
                 int duration = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.createTask(task, startTime, duration, file, dir, fileBackedTasksManager));
+                fileBackedTasksManager.createTask(task, startTime, duration, fileBackedTasksManager);
+                URI url = URI.create("http://localhost:8080/tasks/task/");
+                Gson gson = new Gson();
+                String json = gson.toJson(task);
+                final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 5) {
                 Epic epic = new Epic();
@@ -80,115 +116,197 @@ public class Main implements Serializable {
                 String startTime = scanner.next();
                 System.out.println("Введите продолжительность задачи в часах");
                 int duration = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.createEpic(epic, startTime, duration, file, dir, fileBackedTasksManager));
+                fileBackedTasksManager.createEpic(epic, startTime, duration, fileBackedTasksManager);
+                URI url = URI.create("http://localhost:8080/tasks/epic/");
+                Gson gson = new Gson();
+                String json = gson.toJson(epic);
+                final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 6) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
+                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, fileBackedTasksManager);
                 Subtask subtask = new Subtask();
                 System.out.println("Введите дату и время начала задачи по образцу: 2022-05-01T21:46:39.110446100");
                 String startTime = scanner.next();
                 System.out.println("Введите продолжительность задачи в часах");
                 int duration = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.createSubTask(epic, subtask, startTime, duration, file, dir, fileBackedTasksManager));
+                fileBackedTasksManager.createSubTask(epic, subtask, startTime, duration, fileBackedTasksManager);
+                URI url = URI.create("http://localhost:8080/tasks/subtask/");
+                Gson gson = new Gson();
+                String json = gson.toJson(subtask);
+                final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 7) {
-                System.out.println(fileBackedTasksManager.clearAllTasks(file, dir, fileBackedTasksManager));
+                URI url = URI.create("http://localhost:8080/tasks/allTask/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 8) {
-                System.out.println(fileBackedTasksManager.clearAllEpic(file, dir, fileBackedTasksManager));
+                URI url = URI.create("http://localhost:8080/tasks/allEpic/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 80) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.clearAllSubTasks(idNumber, file, dir, fileBackedTasksManager));
+                URI url = URI.create("http://localhost:8080/tasks/allSubtask/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 9) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager));
+                URI url = URI.create("http://localhost:8080/tasks/getAnytask/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 90) {
                 System.out.println("Введите ID эпик");
                 int epicIdNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(epicIdNumber, file, dir, fileBackedTasksManager);
-                if (epic.getSubTasksList().isEmpty()){
+                URI url = URI.create("http://localhost:8080/tasks/subTaskList/?" + epicIdNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.body().contains("{}")){
                     System.out.println("В этом эпике нет подзадач");
                 } else {
                     System.out.println("Введите ID подзадачи");
                     int subtaskIdNumber = scanner.nextInt();
-                    System.out.println(fileBackedTasksManager.getSubTaskById(epicIdNumber, subtaskIdNumber, file, dir, fileBackedTasksManager));
+                    URI url1 = URI.create("http://localhost:8080/tasks/getSubtask/?" + subtaskIdNumber + "&" + epicIdNumber);
+                    HttpRequest request1 = HttpRequest.newBuilder().uri(url1).GET().build();
+                    HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+                    System.out.println(response1.body());
                 }
 
             } else if (command == 10) {
                 System.out.println("Введите ID");
                 Task newTask = new Task();
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.renewTaskById(newTask, idNumber, file, dir, fileBackedTasksManager));
+                fileBackedTasksManager.renewTaskById(newTask, idNumber, fileBackedTasksManager);
+                URI url = URI.create("http://localhost:8080/tasks/newTask/");
+                Gson gson = new Gson();
+                String json = gson.toJson(newTask);
+                final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 11) {
                 System.out.println("Введите ID эпик");
                 Epic newEpic = new Epic();
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.renewEpicById(newEpic, idNumber, file, dir, fileBackedTasksManager));
+                fileBackedTasksManager.renewEpicById(newEpic, idNumber, fileBackedTasksManager);
+                URI url = URI.create("http://localhost:8080/tasks/newEpic/");
+                Gson gson = new Gson();
+                String json = gson.toJson(newEpic);
+                final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 12) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
-                if (epic.getSubTasksList().isEmpty()){
+                URI url = URI.create("http://localhost:8080/tasks/subTaskList/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.body().contains("{}")){
                     System.out.println("В этом эпике нет подзадач");
                 } else {
                     System.out.println("Введите ID подзадачи");
                     Subtask newSubTask = new Subtask();
                     int subIdNumber = scanner.nextInt();
-                    System.out.println(fileBackedTasksManager.renewSubTaskById(epic, newSubTask, subIdNumber, file, dir, fileBackedTasksManager));
+                    fileBackedTasksManager.renewSubTaskById(fileBackedTasksManager.getEpicsList().get(idNumber), newSubTask, subIdNumber, fileBackedTasksManager);
+                    URI url1 = URI.create("http://localhost:8080/tasks/newSubtask/");
+                    Gson gson = new Gson();
+                    String json = gson.toJson(newSubTask);
+                    final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+                    HttpRequest request1 = HttpRequest.newBuilder().uri(url1).POST(body).build();
+                    HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+                    System.out.println(response1.body());
                 }
 
             } else if (command == 13) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.clearTaskById(idNumber, file, dir, fileBackedTasksManager));
+                URI url = URI.create("http://localhost:8080/tasks/task/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 14) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.clearEpicById(idNumber, file, dir, fileBackedTasksManager));
+                URI url = URI.create("http://localhost:8080/tasks/epic/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 15) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) fileBackedTasksManager.getAnyTaskById(idNumber, file, dir, fileBackedTasksManager);
-                if (epic.getSubTasksList().isEmpty()){
+                URI url = URI.create("http://localhost:8080/tasks/subTaskList/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.body().contains("{}")){
                     System.out.println("В этом эпике нет подзадач");
                 } else {
                     System.out.println("Введите ID подзадачи");
                     int subIdNumber = scanner.nextInt();
-                    System.out.println(fileBackedTasksManager.clearSubTaskById(epic, subIdNumber, file, dir, fileBackedTasksManager));
+                    URI url1 = URI.create("http://localhost:8080/tasks/subtask/?" + subIdNumber + "&" + idNumber);
+                    HttpRequest request1 = HttpRequest.newBuilder().uri(url1).DELETE().build();
+                    HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+                    System.out.println(response1.body());
                 }
 
             } else if (command == 16) {
-                System.out.println(fileBackedTasksManager.getTasksList() + " " + fileBackedTasksManager.getEpicsList());
+                URI url = URI.create("http://localhost:8080/tasks/alltasks/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 17) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.getTaskStatusById(idNumber));
+                URI url = URI.create("http://localhost:8080/tasks/taskStatus/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 18) {
                 System.out.println("Введите ID");
                 int idNumber = scanner.nextInt();
-                System.out.println(fileBackedTasksManager.getEpicStatusById(idNumber));
+                URI url = URI.create("http://localhost:8080/tasks/epicStatus/?" + idNumber);
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 19) {
-                System.out.println(fileBackedTasksManager.getInMemoryHistoryManager().getHistory());
+                URI url = URI.create("http://localhost:8080/tasks/history/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 20) {
-                System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
+                URI url = URI.create("http://localhost:8080/tasks/");
+                HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response.body());
 
             } else if (command == 0) {
+                httpServer.stop(1);
                 break;
+
             }
         }
     }

@@ -24,7 +24,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {   //здесь 
 
     @Test
     public void saveAndLoadWithoutTasks() throws IOException, ClassNotFoundException {
-        fileBackedTasksManager.save(file, dir, fileBackedTasksManager);
+        fileBackedTasksManager.save(fileBackedTasksManager);
         FileBackedTasksManager.loadFromFile(file, dir);
         assertTrue(fileBackedTasksManager.getTasksList().isEmpty(), "Сохранения состояния не произошло");
     }
@@ -34,15 +34,15 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {   //здесь 
         Epic epic = new Epic();
         String startTime = "2000-01-01T01:00:00.000000000";
         int duration = 3;
-        fileBackedTasksManager.createEpic(epic, startTime, duration, file, dir, fileBackedTasksManager);
-        fileBackedTasksManager.save(file, dir, fileBackedTasksManager);
+        fileBackedTasksManager.createEpic(epic, startTime, duration, fileBackedTasksManager);
+        fileBackedTasksManager.save(fileBackedTasksManager);
         FileBackedTasksManager.loadFromFile(file, dir);
-        assertEquals(epic, fileBackedTasksManager.getAnyTaskById(1, file, dir, fileBackedTasksManager), "Сохранения состояния не произошло");
+        assertEquals(epic, fileBackedTasksManager.getAnyTaskById(1, fileBackedTasksManager), "Сохранения состояния не произошло");
     }
 
     @Test
     public void saveAndLoadWithEmptyHistoryList() throws IOException, ClassNotFoundException {
-        fileBackedTasksManager.save(file, dir, fileBackedTasksManager);
+        fileBackedTasksManager.save(fileBackedTasksManager);
         FileBackedTasksManager.loadFromFile(file, dir);
         assertTrue(fileBackedTasksManager.getInMemoryHistoryManager().getHistory().isEmpty(), "Сохранения состояния не произошло");
     }

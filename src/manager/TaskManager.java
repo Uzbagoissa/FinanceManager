@@ -9,10 +9,6 @@ import java.util.HashMap;
 
 public interface TaskManager {
 
-    void changeEpicTime(Epic epic, Subtask subtask);
-
-    void changeEpicStatus(Epic epic);
-
     ArrayList<Task> getPrioritizedTasksList();
 
     HashMap<Integer, Task> getTasksList();
