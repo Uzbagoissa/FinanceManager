@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,14 +22,14 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {   //здесь 
     }
 
     @Test
-    public void saveAndLoadWithoutTasks() throws IOException, ClassNotFoundException {
+    public void saveAndLoadWithoutTasks() throws ClassNotFoundException {
         fileBackedTasksManager.save(fileBackedTasksManager);
         FileBackedTasksManager.loadFromFile(file, dir);
         assertTrue(fileBackedTasksManager.getTasksList().isEmpty(), "Сохранения состояния не произошло");
     }
 
     @Test
-    public void saveAndLoadWithEpicWithoutSubtasks() throws IOException, ClassNotFoundException {
+    public void saveAndLoadWithEpicWithoutSubtasks() throws ClassNotFoundException {
         Epic epic = new Epic();
         String startTime = "2000-01-01T01:00:00.000000000";
         int duration = 3;
@@ -41,7 +40,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {   //здесь 
     }
 
     @Test
-    public void saveAndLoadWithEmptyHistoryList() throws IOException, ClassNotFoundException {
+    public void saveAndLoadWithEmptyHistoryList() throws ClassNotFoundException {
         fileBackedTasksManager.save(fileBackedTasksManager);
         FileBackedTasksManager.loadFromFile(file, dir);
         assertTrue(fileBackedTasksManager.getInMemoryHistoryManager().getHistory().isEmpty(), "Сохранения состояния не произошло");

@@ -13,26 +13,18 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager, Serializable {
     private final HashMap<Integer, Task> taskList;
     private final HashMap<Integer, Epic> epicList;
-    /*private TreeSet<Task> prioritizedTasksList;*/
     private final ArrayList<Task> prioritizedTasksList;
     private int idNumber;
     private final HistoryManager inMemoryHistoryManager;
     TaskComparator taskComparator = new TaskComparator();
-    /*Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(Task::getId);*/
 
     public InMemoryTaskManager() {
         this.taskList = new HashMap<>();
         this.epicList = new HashMap<>();
-        /*this.prioritizedTasksList = new TreeSet<>(taskComparator);*/
         this.prioritizedTasksList = new ArrayList<>();
         this.idNumber = 0;
         this.inMemoryHistoryManager = Managers.getDefaultHistory();
     }
-
-    /*@Override
-    public TreeSet<Task> getPrioritizedTasksList() {
-        return prioritizedTasksList;
-    }*/
 
     @Override
     public ArrayList<Task> getPrioritizedTasksList() {

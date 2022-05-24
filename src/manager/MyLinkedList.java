@@ -13,7 +13,7 @@ public class MyLinkedList implements Serializable {
     Node<Task> first;
     Node<Task> last;
 
-    private Map<Integer, Node<Task>> map = new HashMap<>();
+    private final Map<Integer, Node<Task>> map = new HashMap<>();
 
     public void linkLast(Task element) {
         Node<Task> newNode = new Node<>(last, element, null);

@@ -18,6 +18,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         this.dir = dir;
     }
 
+    public FileBackedTasksManager() {
+
+    }
+
     public ArrayList<Task> getPrioritizedTasksList() {
         return super.getPrioritizedTasksList();
     }
@@ -172,7 +176,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
         }
     }
-
 }
 
 

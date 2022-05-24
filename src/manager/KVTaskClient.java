@@ -1,19 +1,20 @@
 package manager;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class KVTaskClient {
+public class KVTaskClient implements Serializable {
 
     private final String server;
-    private final String apiKey;
+    private final String apiToken;
 
     public KVTaskClient(final String server) {
         this.server = server;
-        this.apiKey = register(server);
+        this.apiToken = register(server);
     }
 
     private String register(String server) {
@@ -36,8 +37,9 @@ public class KVTaskClient {
     public String load(String key) {
         try {
             final HttpClient client = HttpClient.newHttpClient();
+            URI url = URI.create(server + "load/" + key + "?API_TOKEN=" + this.apiToken);
             final HttpRequest req = HttpRequest.newBuilder()
-                    .uri(URI.create(server + "load/" + key + "?API_KEY=" + this.apiKey))
+                    .uri(url)
                     .GET()
                     .build();
             final HttpResponse<String> response = client.send(req, HttpResponse.BodyHandlers.ofString());
@@ -50,8 +52,21 @@ public class KVTaskClient {
         }
     }
 
-    public String put(String key, String value) {
-
-        return "";
+    public void put(String key, String json) {
+        try {
+            final HttpClient client = HttpClient.newHttpClient();
+            URI url = URI.create(server + "save/" + key + "?API_TOKEN=" + this.apiToken);
+            HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+            final HttpRequest request = HttpRequest.newBuilder()
+                    .uri(url)
+                    .POST(body)
+                    .build();
+            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("");
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("");
+        }
     }
 }
