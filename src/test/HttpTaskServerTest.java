@@ -17,11 +17,19 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTaskServerTest {
-    
     InMemoryTaskManager inMemoryTaskManager;
     HttpTaskServer httpTaskServer;
+    HttpClient client = HttpClient.newHttpClient();
+    Task task = new Task();
+    Epic epic = new Epic();
+    Subtask subtask = new Subtask();
+    String startTime = "2022-05-01T21:46:39.110446100";
+    String startTime1 = "2022-07-01T21:46:39.110446100";
+    int duration = 3;
+    int duration1 = 3;
 
     public HttpResponse<String> get(HttpClient client, String urld) throws IOException, InterruptedException {
         URI url = URI.create(urld);
@@ -43,22 +51,13 @@ public class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
-    
+
     @BeforeEach
     public void beforeEach() throws IOException {
-        inMemoryTaskManager = new InMemoryTaskManager();
-        httpTaskServer = new HttpTaskServer(inMemoryTaskManager);
+        httpTaskServer = new HttpTaskServer();
+        inMemoryTaskManager = httpTaskServer.getInMemoryTaskManager();
         httpTaskServer.start();
     }
-
-    HttpClient client = HttpClient.newHttpClient();
-    Task task = new Task();
-    Epic epic = new Epic();
-    Subtask subtask = new Subtask();
-    String startTime = "2022-05-01T21:46:39.110446100";
-    String startTime1 = "2022-07-01T21:46:39.110446100";
-    int duration = 3;
-    int duration1 = 3;
 
     @AfterEach
     void afterEach() {

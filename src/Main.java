@@ -21,7 +21,7 @@ public class Main implements Serializable {
 
             System.out.println("1 - Посмотреть список обычных задач");
             System.out.println("2 - Посмотреть список эпик задач");
-            System.out.println("3 - Посмотреть список подзадач требуемого эпик");
+            System.out.println("3 - Посмотреть список подзадач нужного эпика");
 
             System.out.println("4 - Создать новую обычную задачу");
             System.out.println("5 - Создать новую эпик задачу");
@@ -55,16 +55,15 @@ public class Main implements Serializable {
             int command = scanner.nextInt();
 
             if (command == 1) {
-                System.out.println(httpTaskManager.loadFromServer("taskList"));
+                System.out.println(httpTaskManager.load("taskList"));
 
             } else if (command == 2) {
-                System.out.println(httpTaskManager.loadFromServer("epicList"));
+                System.out.println(httpTaskManager.load("epicList"));
 
             } else if (command == 3) {
                 System.out.println("Введите ID эпик");
                 int idNumber = scanner.nextInt();
-                Epic epic = (Epic) httpTaskManager.getAnyTaskById(idNumber);
-                System.out.println(httpTaskManager.loadFromServer("subtaskList" + epic.getId()));
+                System.out.println(((Epic) httpTaskManager.load("epicList").get(idNumber)).getSubTasksList());
 
             } else if (command == 4) {
                 Task task = new Task();
@@ -182,10 +181,10 @@ public class Main implements Serializable {
                 System.out.println(httpTaskManager.getEpicStatusById(idNumber));
 
             } else if (command == 19) {
-                System.out.println(httpTaskManager.loadFromServer("history"));
+                System.out.println(httpTaskManager.load("history"));
 
             } else if (command == 20) {
-                System.out.println(httpTaskManager.loadFromServer("prioritizedTasksList"));
+                System.out.println(httpTaskManager.load("prioritizedTasksList"));
 
             } else if (command == 0) {
                 kvServer.stop();

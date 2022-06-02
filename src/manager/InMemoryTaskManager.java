@@ -409,5 +409,4 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
             epic.setDuration(epicDuration);
         }
     }
-
 }

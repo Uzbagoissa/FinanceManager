@@ -22,10 +22,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     }
 
-    public ArrayList<Task> getPrioritizedTasksList() {
-        return super.getPrioritizedTasksList();
-    }
-
     public HashMap<Integer, Task> getTasksList() {
         return super.getTasksList();
     }
@@ -34,92 +30,88 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return super.getEpicsList();
     }
 
-    public HistoryManager getInMemoryHistoryManager() {
-        return super.getInMemoryHistoryManager();
-    }
-
-    public HashMap<Integer, Task> createTask(Task task, String startTime, int duration,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Task> createTask(Task task, String startTime, int duration) {
         super.createTask(task, startTime, duration);
-        save(fileBackedTasksManager);
+        save();
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> createEpic(Epic epic, String startTime, int duration,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Epic> createEpic(Epic epic, String startTime, int duration) {
         super.createEpic(epic, startTime, duration);
-        save(fileBackedTasksManager);
+        save();
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> createSubTask(Epic epic, Subtask subtask, String startTime, int duration,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Subtask> createSubTask(Epic epic, Subtask subtask, String startTime, int duration) {
         HashMap<Integer, Subtask> subTaskList = epic.getSubTasksList();
         super.createSubTask(epic, subtask, startTime, duration);
-        save(fileBackedTasksManager);
+        save();
         return subTaskList;
     }
 
-    public HashMap<Integer, Task> clearAllTasks( FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Task> clearAllTasks() {
         super.clearAllTasks();
-        save(fileBackedTasksManager);
+        save();
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> clearAllEpic( FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Epic> clearAllEpic() {
         super.clearAllEpic();
-        save(fileBackedTasksManager);
+        save();
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> clearAllSubTasks(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Subtask> clearAllSubTasks(int idNumber) {
         HashMap<Integer, Subtask> subTaskList = super.clearAllSubTasks(idNumber);
-        save(fileBackedTasksManager);
+        save();
         return subTaskList;
     }
 
-    public Task getAnyTaskById(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public Task getAnyTaskById(int idNumber) {
         Task task = super.getAnyTaskById(idNumber);
-        save(fileBackedTasksManager);
+        save();
         return task;
     }
 
-    public Subtask getSubTaskById(int epicIdNumber, int subtaskIdNumber,  FileBackedTasksManager fileBackedTasksManager){
+    public Subtask getSubTaskById(int epicIdNumber, int subtaskIdNumber){
         Subtask subtask = super.getSubTaskById(epicIdNumber, subtaskIdNumber);
-        save(fileBackedTasksManager);
+        save();
         return subtask;
     }
 
-    public HashMap<Integer, Task> renewTaskById(Task newTask, int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Task> renewTaskById(Task newTask, int idNumber) {
         super.renewTaskById(newTask, idNumber);
-        save(fileBackedTasksManager);
+        save();
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> renewEpicById(Epic newEpic, int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Epic> renewEpicById(Epic newEpic, int idNumber) {
         super.renewEpicById(newEpic, idNumber);
-        save(fileBackedTasksManager);
+        save();
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Subtask> renewSubTaskById(Epic epic, Subtask newSubTask, int idNumber) {
         HashMap<Integer, Subtask> subTaskList = super.renewSubTaskById(epic, newSubTask, idNumber);
-        save(fileBackedTasksManager);
+        save();
         return subTaskList;
     }
 
-    public HashMap<Integer, Task> clearTaskById(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Task> clearTaskById(int idNumber) {
         super.clearTaskById(idNumber);
-        save(fileBackedTasksManager);
+        save();
         return super.getTasksList();
     }
 
-    public HashMap<Integer, Epic> clearEpicById(int idNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Epic> clearEpicById(int idNumber) {
         super.clearEpicById(idNumber);
-        save(fileBackedTasksManager);
+        save();
         return super.getEpicsList();
     }
 
-    public HashMap<Integer, Subtask> clearSubTaskById(Epic epic, int subIdNumber,  FileBackedTasksManager fileBackedTasksManager) {
+    public HashMap<Integer, Subtask> clearSubTaskById(Epic epic, int subIdNumber) {
         HashMap<Integer, Subtask> subTaskList = super.clearSubTaskById(epic, subIdNumber);
-        save(fileBackedTasksManager);
+        save();
         return subTaskList;
     }
 
@@ -139,7 +131,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         super.changeEpicTime(epic, subtask);
     }
 
-    public static FileBackedTasksManager loadFromFile(File file, String dir) throws ClassNotFoundException {
+    public static FileBackedTasksManager load(File file, String dir) throws ClassNotFoundException {
         FileBackedTasksManager fileBackedTasksManager = null;
         if (!file.exists()) {
             fileBackedTasksManager = new FileBackedTasksManager(file, dir);
@@ -154,7 +146,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return fileBackedTasksManager;
     }
 
-    public void save(FileBackedTasksManager fileBackedTasksManager){
+    public void save(){
         FileOutputStream fileOutputStream = null;
         ObjectOutputStream objectOutputStream = null;
         try {
@@ -163,7 +155,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
             fileOutputStream = new FileOutputStream(file);
             objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(fileBackedTasksManager);
+            objectOutputStream.writeObject(this);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

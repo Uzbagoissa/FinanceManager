@@ -3,11 +3,10 @@ package manager;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-
-import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +19,10 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final int PORT = 8080;
     private final HttpServer server;
+    InMemoryTaskManager inMemoryTaskManager;
 
-    public HttpTaskServer(InMemoryTaskManager inMemoryTaskManager) throws IOException {
+    public HttpTaskServer() throws IOException {
+        this.inMemoryTaskManager = Managers.getDefault();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/tasks", new Handler(inMemoryTaskManager));
     }
@@ -33,6 +34,10 @@ public class HttpTaskServer {
 
     public void stop() {
         server.stop(0);
+    }
+
+    public InMemoryTaskManager getInMemoryTaskManager() {
+        return inMemoryTaskManager;
     }
 
     static class Handler implements HttpHandler {
@@ -102,6 +107,8 @@ public class HttpTaskServer {
                             case "epicStatus":
                                 response = inMemoryTaskManager.getEpicStatusById(getQuery(httpExchange));
                                 break;
+                            default:
+                                response = "Вы использовали какой-то другой метод!";
                         }
                     }
                     break;
@@ -138,6 +145,8 @@ public class HttpTaskServer {
                             response = subtask.toString();
                             break;
                         }
+                        default:
+                            response = "Вы использовали какой-то другой метод!";
                     }
                     break;
                 case DELETE:
@@ -165,6 +174,8 @@ public class HttpTaskServer {
                             int queryEpicID = Integer.parseInt(querys[1]);
                             response = inMemoryTaskManager.clearSubTaskById(inMemoryTaskManager.getEpicsList().get(queryEpicID), querySubtaskID).toString();
                             break;
+                        default:
+                            response = "Вы использовали какой-то другой метод!";
                     }
                     break;
                 default:
