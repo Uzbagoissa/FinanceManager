@@ -19,12 +19,12 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final int PORT = 8080;
     private final HttpServer server;
-    InMemoryTaskManager inMemoryTaskManager;
+    TaskManager taskManager;
 
     public HttpTaskServer() throws IOException {
-        this.inMemoryTaskManager = Managers.getDefault();
+        this.taskManager = Managers.getDefault();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        server.createContext("/tasks", new Handler(inMemoryTaskManager));
+        server.createContext("/tasks", new Handler(taskManager));
     }
 
     public void start() {
@@ -36,19 +36,19 @@ public class HttpTaskServer {
         server.stop(0);
     }
 
-    public InMemoryTaskManager getInMemoryTaskManager() {
-        return inMemoryTaskManager;
+    public TaskManager getTaskManager() {
+        return taskManager;
     }
 
     static class Handler implements HttpHandler {
-        private InMemoryTaskManager inMemoryTaskManager;
+        private TaskManager taskManager;
         private Gson gson = new Gson();
         private static final String GET = "GET";
         private static final String POST = "POST";
         private static final String DELETE = "DELETE";
 
-        public Handler(InMemoryTaskManager inMemoryTaskManager) {
-            this.inMemoryTaskManager = inMemoryTaskManager;
+        public Handler(TaskManager taskManager) {
+            this.taskManager = taskManager;
         }
 
         protected String readText(HttpExchange httpExchange) throws IOException {
@@ -72,40 +72,40 @@ public class HttpTaskServer {
             switch (method) {
                 case GET:
                     if (path.equals("/tasks/")){
-                        response = inMemoryTaskManager.getPrioritizedTasksList().toString();
+                        response = taskManager.getPrioritizedTasksList().toString();
                     } else {
                         String[] splitStringsGet = path.split("/");
                         switch (splitStringsGet[2]) {
                             case "taskList":
-                                response = inMemoryTaskManager.getTasksList().toString();
+                                response = taskManager.getTasksList().toString();
                                 break;
                             case "epicList":
-                                response = inMemoryTaskManager.getEpicsList().toString();
+                                response = taskManager.getEpicsList().toString();
                                 break;
                             case "subTaskList":
-                                response = inMemoryTaskManager.getEpicsList().get(getQuery(httpExchange)).getSubTasksList().toString();
+                                response = taskManager.getEpicsList().get(getQuery(httpExchange)).getSubTasksList().toString();
                                 break;
                             case "getAnytask":
-                                response = inMemoryTaskManager.getAnyTaskById(getQuery(httpExchange)).toString();
+                                response = taskManager.getAnyTaskById(getQuery(httpExchange)).toString();
                                 break;
                             case "getSubtask":
                                 String queryg = httpExchange.getRequestURI().getQuery();
                                 String[] querys = queryg.split("&");
                                 int querySubtaskID = Integer.parseInt(querys[0]);
                                 int queryEpicID = Integer.parseInt(querys[1]);
-                                response = inMemoryTaskManager.getSubTaskById(queryEpicID, querySubtaskID).toString();
+                                response = taskManager.getSubTaskById(queryEpicID, querySubtaskID).toString();
                                 break;
                             case "history":
-                                response = inMemoryTaskManager.getInMemoryHistoryManager().getHistory().toString();
+                                response = taskManager.getInMemoryHistoryManager().getHistory().toString();
                                 break;
                             case "alltasks":
-                                response = inMemoryTaskManager.getTasksList().toString() + " " + inMemoryTaskManager.getEpicsList().toString();
+                                response = taskManager.getTasksList().toString() + " " + taskManager.getEpicsList().toString();
                                 break;
                             case "taskStatus":
-                                response = inMemoryTaskManager.getTaskStatusById(getQuery(httpExchange));
+                                response = taskManager.getTaskStatusById(getQuery(httpExchange));
                                 break;
                             case "epicStatus":
-                                response = inMemoryTaskManager.getEpicStatusById(getQuery(httpExchange));
+                                response = taskManager.getEpicStatusById(getQuery(httpExchange));
                                 break;
                             default:
                                 response = "Вы использовали какой-то другой метод!";
@@ -153,26 +153,26 @@ public class HttpTaskServer {
                     String[] splitStringsDelete = path.split("/");
                     switch (splitStringsDelete[2]) {
                         case "allTask":
-                            response = inMemoryTaskManager.clearAllTasks().toString();
+                            response = taskManager.clearAllTasks().toString();
                             break;
                         case "allEpic":
-                            response = inMemoryTaskManager.clearAllEpic().toString();
+                            response = taskManager.clearAllEpic().toString();
                             break;
                         case "allSubtask":
-                            response = inMemoryTaskManager.clearAllSubTasks(getQuery(httpExchange)).toString();
+                            response = taskManager.clearAllSubTasks(getQuery(httpExchange)).toString();
                             break;
                         case "task":
-                            response = inMemoryTaskManager.clearTaskById(getQuery(httpExchange)).toString();
+                            response = taskManager.clearTaskById(getQuery(httpExchange)).toString();
                             break;
                         case "epic":
-                            response = inMemoryTaskManager.clearEpicById(getQuery(httpExchange)).toString();
+                            response = taskManager.clearEpicById(getQuery(httpExchange)).toString();
                             break;
                         case "subtask":
                             String queryg1 = httpExchange.getRequestURI().getQuery();
                             String[] querys = queryg1.split("&");
                             int querySubtaskID = Integer.parseInt(querys[0]);
                             int queryEpicID = Integer.parseInt(querys[1]);
-                            response = inMemoryTaskManager.clearSubTaskById(inMemoryTaskManager.getEpicsList().get(queryEpicID), querySubtaskID).toString();
+                            response = taskManager.clearSubTaskById(taskManager.getEpicsList().get(queryEpicID), querySubtaskID).toString();
                             break;
                         default:
                             response = "Вы использовали какой-то другой метод!";
