@@ -2,7 +2,7 @@ package test;
 
 import com.google.gson.Gson;
 import manager.HttpTaskServer;
-import manager.TaskManager;
+import manager.InMemoryTaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTaskServerTest {
-    TaskManager taskManager;
+    InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
     HttpTaskServer httpTaskServer;
     HttpClient client = HttpClient.newHttpClient();
     Task task = new Task();
@@ -54,8 +54,7 @@ public class HttpTaskServerTest {
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        httpTaskServer = new HttpTaskServer();
-        taskManager = httpTaskServer.getTaskManager();
+        httpTaskServer = new HttpTaskServer(inMemoryTaskManager);
         httpTaskServer.start();
     }
 
@@ -66,7 +65,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void createTask() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createTask(task, startTime, duration);
         HttpResponse<String> response = post(client, "http://localhost:8080/tasks/task/", task);
         assertEquals(task.toString(), response.body(), "Таска не создалась");
 
@@ -74,7 +73,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void createEpic() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         HttpResponse<String> response = post(client, "http://localhost:8080/tasks/epic/", epic);
         assertEquals(epic.toString(), response.body(), "Эпик не создался");
         System.out.println(response.body());
@@ -82,8 +81,8 @@ public class HttpTaskServerTest {
 
     @Test
     public void createSubtask() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.createSubTask(epic, subtask, startTime1, duration1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration1);
         HttpResponse<String> response = post(client, "http://localhost:8080/tasks/subtask/", subtask);
         assertEquals(subtask.toString(), response.body(), "Субтаска не создался");
         System.out.println(response.body());
@@ -91,54 +90,54 @@ public class HttpTaskServerTest {
 
     @Test
     public void getTaskList() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createTask(task, startTime, duration);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/taskList/");
-        assertEquals(taskManager.getTasksList().toString(), response.body(), "Списка тасок нет");
-        assertFalse(taskManager.getTasksList().isEmpty(), "Списка тасок нет");
+        assertEquals(inMemoryTaskManager.getTasksList().toString(), response.body(), "Списка тасок нет");
+        assertFalse(inMemoryTaskManager.getTasksList().isEmpty(), "Списка тасок нет");
         System.out.println(response.body());
     }
 
     @Test
     public void getEpicList() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/epicList/");
-        assertEquals(taskManager.getEpicsList().toString(), response.body(), "Списка эпиков нет");
-        assertFalse(taskManager.getEpicsList().isEmpty(), "Списка эпиков нет");
+        assertEquals(inMemoryTaskManager.getEpicsList().toString(), response.body(), "Списка эпиков нет");
+        assertFalse(inMemoryTaskManager.getEpicsList().isEmpty(), "Списка эпиков нет");
         System.out.println(response.body());
     }
 
     @Test
     public void getSubtaskList() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.createSubTask(epic, subtask, startTime1, duration1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration1);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/subTaskList/?" + epic.getId());
-        assertEquals(taskManager.getEpicsList().get(1).getSubTasksList().toString(), response.body(), "Списка субтасков нет");
+        assertEquals(inMemoryTaskManager.getEpicsList().get(1).getSubTasksList().toString(), response.body(), "Списка субтасков нет");
         assertFalse(epic.getSubTasksList().isEmpty(), "Списка субтасков нет");
         System.out.println(response.body());
     }
 
     @Test
     public void removeAllTasks() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createTask(task, startTime, duration);
         HttpResponse<String> response = delete(client, "http://localhost:8080/tasks/allTask/");
-        assertTrue(taskManager.getTasksList().isEmpty(), "Таски не удалились");
+        assertTrue(inMemoryTaskManager.getTasksList().isEmpty(), "Таски не удалились");
         assertEquals(response.body(), "{}", "Таски не удалились");
         System.out.println(response.body());
     }
 
     @Test
     public void removeAllEpics() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         HttpResponse<String> response = delete(client, "http://localhost:8080/tasks/allEpic/");
-        assertTrue(taskManager.getEpicsList().isEmpty(), "Эпики не удалились");
+        assertTrue(inMemoryTaskManager.getEpicsList().isEmpty(), "Эпики не удалились");
         assertEquals(response.body(), "{}", "Эпики не удалились");
         System.out.println(response.body());
     }
 
     @Test
     public void removeAllSubtasks() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.createSubTask(epic, subtask, startTime1, duration1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration1);
         HttpResponse<String> response = delete(client, "http://localhost:8080/tasks/allSubtask/?" + epic.getId());
         assertTrue(epic.getSubTasksList().isEmpty(), "Субтаски не удалились");
         assertEquals(response.body(), "{}", "Субтаски не удалились");
@@ -147,8 +146,8 @@ public class HttpTaskServerTest {
 
     @Test
     public void getTaskByID() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
-        taskManager.createEpic(epic, startTime1, duration1);
+        inMemoryTaskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createEpic(epic, startTime1, duration1);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/getAnytask/?" + task.getId());
         HttpResponse<String> response1 = get(client, "http://localhost:8080/tasks/getAnytask/?" + epic.getId());
         assertEquals(task.toString(), response.body(), "Таску не получили");
@@ -159,8 +158,8 @@ public class HttpTaskServerTest {
 
     @Test
     public void getSubtaskByID() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.createSubTask(epic, subtask, startTime1, duration1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration1);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/getSubtask/?" + subtask.getId() + "&" + epic.getId());
         assertEquals(subtask.toString(), response.body(), "Субтаску не получили");
         System.out.println(response.body());
@@ -168,43 +167,43 @@ public class HttpTaskServerTest {
 
     @Test
     public void renewTask() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
-        assertTrue(taskManager.getTasksList().containsValue(task), "Таску не создали");
+        inMemoryTaskManager.createTask(task, startTime, duration);
+        assertTrue(inMemoryTaskManager.getTasksList().containsValue(task), "Таску не создали");
         Task newTask = new Task();
-        taskManager.renewTaskById(newTask, task.getId());
-        assertTrue(taskManager.getTasksList().containsValue(newTask), "Таску не создали");
-        assertFalse(taskManager.getTasksList().containsValue(task), "Таску не создали");
+        inMemoryTaskManager.renewTaskById(newTask, task.getId());
+        assertTrue(inMemoryTaskManager.getTasksList().containsValue(newTask), "Таску не создали");
+        assertFalse(inMemoryTaskManager.getTasksList().containsValue(task), "Таску не создали");
         HttpResponse<String> response = post(client, "http://localhost:8080/tasks/newTask/", newTask);
         assertEquals(newTask.toString(), response.body(), "Таску не обновили");
         HttpResponse<String> response1 = get(client, "http://localhost:8080/tasks/taskList/");
-        assertFalse(taskManager.getTasksList().containsValue(task), "Старая таска есть в списке");
-        assertEquals(taskManager.getTasksList().toString(), response1.body(), "Таску не обновили");
+        assertFalse(inMemoryTaskManager.getTasksList().containsValue(task), "Старая таска есть в списке");
+        assertEquals(inMemoryTaskManager.getTasksList().toString(), response1.body(), "Таску не обновили");
         System.out.println(response1.body());
     }
 
     @Test
     public void renewEpic() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        assertTrue(taskManager.getEpicsList().containsValue(epic), "Эпик не создали");
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        assertTrue(inMemoryTaskManager.getEpicsList().containsValue(epic), "Эпик не создали");
         Epic newEpic = new Epic();
-        taskManager.renewEpicById(newEpic, epic.getId());
-        assertTrue(taskManager.getEpicsList().containsValue(newEpic), "Эпик не создали");
-        assertFalse(taskManager.getEpicsList().containsValue(epic), "Эпик не создали");
+        inMemoryTaskManager.renewEpicById(newEpic, epic.getId());
+        assertTrue(inMemoryTaskManager.getEpicsList().containsValue(newEpic), "Эпик не создали");
+        assertFalse(inMemoryTaskManager.getEpicsList().containsValue(epic), "Эпик не создали");
         HttpResponse<String> response = post(client, "http://localhost:8080/tasks/newEpic/", newEpic);
         assertEquals(newEpic.toString(), response.body(), "Эпик не обновили");
         HttpResponse<String> response1 = get(client, "http://localhost:8080/tasks/epicList/");
-        assertFalse(taskManager.getEpicsList().containsValue(epic), "Старый эпик есть в списке");
-        assertEquals(taskManager.getEpicsList().toString(), response1.body(), "Эпик не обновили");
+        assertFalse(inMemoryTaskManager.getEpicsList().containsValue(epic), "Старый эпик есть в списке");
+        assertEquals(inMemoryTaskManager.getEpicsList().toString(), response1.body(), "Эпик не обновили");
         System.out.println(response1.body());
     }
 
     @Test
     public void renewSubtask() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.createSubTask(epic, subtask, startTime1, duration1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration1);
         assertTrue(epic.getSubTasksList().containsValue(subtask), "Субтаску не создали");
         Subtask newSubtask = new Subtask();
-        taskManager.renewSubTaskById(epic, newSubtask, subtask.getId());
+        inMemoryTaskManager.renewSubTaskById(epic, newSubtask, subtask.getId());
         assertTrue(epic.getSubTasksList().containsValue(newSubtask), "Субтаску не создали");
         assertFalse(epic.getSubTasksList().containsValue(subtask), "Субтаску не создали");
         HttpResponse<String> response = post(client, "http://localhost:8080/tasks/newSubtask/", newSubtask);
@@ -217,7 +216,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void removeTaskByID() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createTask(task, startTime, duration);
         HttpResponse<String> response = delete(client, "http://localhost:8080/tasks/task/?" + task.getId());
         assertEquals("{}", response.body(), "Таска не удалилась");
         System.out.println(response.body());
@@ -225,7 +224,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void removeEpicByID() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         HttpResponse<String> response = delete(client, "http://localhost:8080/tasks/epic/?" + epic.getId());
         assertEquals("{}", response.body(), "Эпик не удалился");
         System.out.println(response.body());
@@ -233,8 +232,8 @@ public class HttpTaskServerTest {
 
     @Test
     public void removeSubtaskByID() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.createSubTask(epic, subtask, startTime1, duration1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createSubTask(epic, subtask, startTime1, duration1);
         HttpResponse<String> response = delete(client, "http://localhost:8080/tasks/subtask/?" + subtask.getId() + "&" + epic.getId());
         assertEquals("{}", response.body(), "Субтаска не удалилась");
         System.out.println(response.body());
@@ -242,7 +241,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void getTaskStatusByID() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createTask(task, startTime, duration);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/taskStatus/?" + task.getId());
         assertEquals("NEW", response.body(), "Статус не верен");
         System.out.println(response.body());
@@ -250,7 +249,7 @@ public class HttpTaskServerTest {
 
     @Test
     public void getEpicStatusByID() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/epicStatus/?" + epic.getId());
         assertEquals("NEW", response.body(), "Статус не верен");
         System.out.println(response.body());
@@ -258,26 +257,26 @@ public class HttpTaskServerTest {
 
     @Test
     public void getHistory() throws IOException, InterruptedException {
-        taskManager.createEpic(epic, startTime, duration);
-        taskManager.getAnyTaskById(1);
+        inMemoryTaskManager.createEpic(epic, startTime, duration);
+        inMemoryTaskManager.getAnyTaskById(1);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/history/");
-        assertEquals(taskManager.getInMemoryHistoryManager().getHistory().toString(), response.body(), "Истории просмотров нет");
+        assertEquals(inMemoryTaskManager.getInMemoryHistoryManager().getHistory().toString(), response.body(), "Истории просмотров нет");
         System.out.println(response.body());
     }
 
     @Test
     public void getPrioritizedTasksList() throws IOException, InterruptedException {
-        taskManager.createTask(task, startTime, duration);
+        inMemoryTaskManager.createTask(task, startTime, duration);
         Task task1 = new Task();
         String startTime1 = "2022-06-01T21:46:39.110446100";
         int duration1 = 3;
-        taskManager.createTask(task1, startTime1, duration1);
+        inMemoryTaskManager.createTask(task1, startTime1, duration1);
         Task task2 = new Task();
         String startTime2 = "2022-07-01T21:46:39.110446100";
         int duration2 = 3;
-        taskManager.createTask(task2, startTime2, duration2);
+        inMemoryTaskManager.createTask(task2, startTime2, duration2);
         HttpResponse<String> response = get(client, "http://localhost:8080/tasks/");
-        assertEquals(taskManager.getPrioritizedTasksList().toString(), response.body(), "Списка задач по времени нет");
+        assertEquals(inMemoryTaskManager.getPrioritizedTasksList().toString(), response.body(), "Списка задач по времени нет");
         System.out.println(response.body());
     }
 }

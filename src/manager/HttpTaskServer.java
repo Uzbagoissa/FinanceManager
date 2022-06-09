@@ -19,10 +19,8 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final int PORT = 8080;
     private final HttpServer server;
-    TaskManager taskManager;
 
-    public HttpTaskServer() throws IOException {
-        this.taskManager = Managers.getDefault();
+    public HttpTaskServer(TaskManager taskManager) throws IOException {
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/tasks", new Handler(taskManager));
     }
@@ -34,10 +32,6 @@ public class HttpTaskServer {
 
     public void stop() {
         server.stop(0);
-    }
-
-    public TaskManager getTaskManager() {
-        return taskManager;
     }
 
     static class Handler implements HttpHandler {
