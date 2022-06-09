@@ -22,14 +22,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     }
 
-    public HashMap<Integer, Task> getTasksList() {
-        return super.getTasksList();
-    }
-
-    public HashMap<Integer, Epic> getEpicsList() {
-        return super.getEpicsList();
-    }
-
     public HashMap<Integer, Task> createTask(Task task, String startTime, int duration) {
         super.createTask(task, startTime, duration);
         save();
@@ -113,22 +105,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         HashMap<Integer, Subtask> subTaskList = super.clearSubTaskById(epic, subIdNumber);
         save();
         return subTaskList;
-    }
-
-    public String getTaskStatusById(int idNumber) {
-        return super.getTaskStatusById(idNumber);
-    }
-
-    public String getEpicStatusById(int idNumber) {
-        return super.getEpicStatusById(idNumber);
-    }
-
-    public void changeEpicStatus(Epic epic) {
-        super.changeEpicStatus(epic);
-    }
-
-    public void changeEpicTime(Epic epic, Subtask subtask) {
-        super.changeEpicTime(epic, subtask);
     }
 
     public static FileBackedTasksManager load(File file, String dir) throws ClassNotFoundException {
