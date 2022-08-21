@@ -89,5 +89,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="commons-beanutils-1.9.3" level="project" />
+    <orderEntry type="library" name="commons-collections-3.2.2" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.6" level="project" />
+    <orderEntry type="library" name="commons-logging-1.2" level="project" />
+    <orderEntry type="library" name="commons-text-1.1" level="project" />
+    <orderEntry type="library" name="opencsv-4.1" level="project" />
   </component>
 </module>
