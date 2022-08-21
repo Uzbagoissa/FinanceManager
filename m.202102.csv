@@ -1,4 +1,7 @@
 item_name,is_expense,quantity,sum_of_one
-Air balloons,TRUE,5004,5
-Ice cream machines,TRUE,17,15000 
-Ice cream sale,FALSE,1022,120
+Cotton candy,FALSE,230,70
+Ice cream,FALSE,340,120
+Coffee,FALSE,254,110
+Cakes,FALSE,3650,250
+Tea,FALSE,256,100
+Disposable tableware,TRUE,1000,130

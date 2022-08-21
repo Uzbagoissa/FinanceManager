@@ -1,7 +1,7 @@
 item_name,is_expense,quantity,sum_of_one
 Pakages for gabage,TRUE,10,80
-Ice cream,FALSE,1200,120
+Ice cream,FALSE,120,120
 Coffee,FALSE,124,110
 Cakes,FALSE,345,250
-Tea,FALSE,149,100
+Tea,FALSE,1490,100
 Disposable tableware,TRUE,879,130
