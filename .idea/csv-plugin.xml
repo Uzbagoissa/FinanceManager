@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\m.202104.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\y.2021.csv">
           <value>
             <Attribute>
