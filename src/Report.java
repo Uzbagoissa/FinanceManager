@@ -17,15 +17,19 @@ public class Report {
 
     public ArrayList<String> checkReports(HashMap monthlyReport, HashMap yearlyreport) {
         ArrayList<String> result = new ArrayList<>();
-        if (monthlyReport.equals(yearlyreport)){
-            result.add("Сверка успешно проведена");
-        }
-        if (!monthlyReport.equals(yearlyreport)){
-            for (Object o : yearlyreport.keySet()) {
-                for (Object o1 : monthlyReport.keySet()) {
-                    if (o == o1){
-                        if (!yearlyreport.get(o).equals(monthlyReport.get(o1))){
-                            result.add(o1.toString());
+        if (monthlyReport.isEmpty() || yearlyreport.isEmpty()){
+            System.out.println("Информация отсутствует. Файлы не считаны");
+        } else {
+            if (monthlyReport.equals(yearlyreport)){
+                result.add("Сверка успешно проведена");
+            }
+            if (!monthlyReport.equals(yearlyreport)){
+                for (Object o : yearlyreport.keySet()) {
+                    for (Object o1 : monthlyReport.keySet()) {
+                        if (o == o1){
+                            if (!yearlyreport.get(o).equals(monthlyReport.get(o1))){
+                                result.add(o1.toString());
+                            }
                         }
                     }
                 }
