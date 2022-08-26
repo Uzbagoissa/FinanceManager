@@ -32,27 +32,27 @@ public class YearlyReport extends Report{
     }
 
     public HashMap<Integer, ArrayList<Integer>> getYearlyReportFromList() {
-        ArrayList<Integer> report1 = new ArrayList<>();
-        ArrayList<Integer> report2 = new ArrayList<>();
-        ArrayList<Integer> report3 = new ArrayList<>();
-        ArrayList<Integer> report4 = new ArrayList<>();
+        ArrayList<Integer> reportOfMonth1 = new ArrayList<>();
+        ArrayList<Integer> reportOfMonth2 = new ArrayList<>();
+        ArrayList<Integer> reportOfMonth3 = new ArrayList<>();
+        ArrayList<Integer> reportOfMonth4 = new ArrayList<>();
         for (int i = 0; i < yearLinesList.size(); i++) {
             ArrayList<String> yearLineContents = yearLinesList.get(i);
             if (yearLineContents.get(0).equals("01")) {
-                report1.add(Integer.parseInt(yearLineContents.get(1)));
-                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), report1);
+                reportOfMonth1.add(Integer.parseInt(yearLineContents.get(1)));
+                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), reportOfMonth1);
             }
             if (yearLineContents.get(0).equals("02")) {
-                report2.add(Integer.parseInt(yearLineContents.get(1)));
-                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), report2);
+                reportOfMonth2.add(Integer.parseInt(yearLineContents.get(1)));
+                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), reportOfMonth2);
             }
             if (yearLineContents.get(0).equals("03")) {
-                report3.add(Integer.parseInt(yearLineContents.get(1)));
-                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), report3);
+                reportOfMonth3.add(Integer.parseInt(yearLineContents.get(1)));
+                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), reportOfMonth3);
             }
             if (yearLineContents.get(0).equals("04")) {
-                report4.add(Integer.parseInt(yearLineContents.get(1)));
-                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), report4);
+                reportOfMonth4.add(Integer.parseInt(yearLineContents.get(1)));
+                yearlyReport.put(Integer.parseInt(yearLineContents.get(0)), reportOfMonth4);
             }
         }
         return yearlyReport;

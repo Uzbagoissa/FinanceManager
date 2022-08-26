@@ -20,28 +20,33 @@ public class Main {
             System.out.println("5 - Вывести информацию о годовом отчёте");
             System.out.println("0 - Выход");
 
-            int command = scanner.nextInt();
+            String command = scanner.next();
 
-            if (command == 1) {
+            if (command.equals("1")) {
                 monthlyReportt.readMonthlyReport(months);
                 monthlyReportt.getMonthlyReportFromList();
+                System.out.println("Все месячные отчеты считаны");
 
-            } else if (command == 2) {
+            } else if (command.equals("2")) {
                 yearlyReportt.readYearlyReport(year);
                 yearlyReportt.getYearlyReportFromList();
+                System.out.println("Годовой отчет считан");
 
-            } else if (command == 3) {
+            } else if (command.equals("3")) {
                 System.out.println(report.checkReports(monthlyReportt.getMonthlyReport(), yearlyReportt.getYearlyReport()));
 
-            } else if (command == 4) {
+            } else if (command.equals("4")) {
                 monthlyReportt.getMonthlyReportInfo();
 
-            } else if (command == 5) {
+            } else if (command.equals("5")) {
                 System.out.println("Рассматриваемый год: " + year.substring(2, 6));
                 yearlyReportt.getYearlyReportInfo();
 
-            } else if (command == 0) {
+            } else if (command.equals("0")) {
                 break;
+
+            } else {
+                System.out.println("Введена неверная команда, попробуйте еще раз");
             }
         }
     }
